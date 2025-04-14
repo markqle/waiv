@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36 Edg/135.0.0.0" version="26.2.12">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1420" dy="1955" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1671" dy="2094" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -76,7 +76,10 @@
         <mxCell id="_nmG_EsVDidJPEz30VU9-21" value="case close" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="590" y="740" width="75" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="_nmG_EsVDidJPEz30VU9-25" value="Depend on which DOR counselor, monthly progress report is sent out to DOR" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="_nmG_EsVDidJPEz30VU9-25" target="ooBP4RP4iMkbLxyPNMtn-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_nmG_EsVDidJPEz30VU9-25" value="Depend on which DOR counselor, monthly progress report is sent out to DOR counselor" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="1020" y="590" width="140" height="70" as="geometry" />
         </mxCell>
         <mxCell id="_nmG_EsVDidJPEz30VU9-31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="_nmG_EsVDidJPEz30VU9-28" target="_nmG_EsVDidJPEz30VU9-21" edge="1">
@@ -149,7 +152,7 @@
           <mxGeometry x="600" y="340" width="140" height="50" as="geometry" />
         </mxCell>
         <mxCell id="ooBP4RP4iMkbLxyPNMtn-3" value="" style="swimlane;startSize=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="827" y="-190" width="663" height="320" as="geometry" />
+          <mxGeometry x="827" y="-190" width="893" height="320" as="geometry" />
         </mxCell>
         <mxCell id="ooBP4RP4iMkbLxyPNMtn-4" value="Link:&amp;nbsp;&lt;a href=&quot;https://csulb.sharepoint.com/sites/CDC-Workability/Wiki/NewApplicantInAccess.aspx&quot;&gt;CDC Workability - NewApplicantInAccess&lt;/a&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="ooBP4RP4iMkbLxyPNMtn-3">
           <mxGeometry width="270" height="30" as="geometry" />
@@ -217,8 +220,20 @@
         <mxCell id="ooBP4RP4iMkbLxyPNMtn-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="ooBP4RP4iMkbLxyPNMtn-3" source="ooBP4RP4iMkbLxyPNMtn-23" target="ooBP4RP4iMkbLxyPNMtn-25">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ooBP4RP4iMkbLxyPNMtn-27" value="Monthly Client&amp;nbsp;&lt;div&gt;Listing&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="1030" y="490" width="120" height="80" as="geometry" />
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-28" value="When adding the documents date:&lt;div&gt;- Mutual Referral Form (date in the document)&lt;/div&gt;&lt;div&gt;- DOR medical note (date signed by participant)&lt;/div&gt;&lt;div&gt;- IPE (date signed by participant)&lt;/div&gt;&lt;div&gt;- Authorizing case note (Email sent date)&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=17;" vertex="1" parent="ooBP4RP4iMkbLxyPNMtn-3">
+          <mxGeometry x="693" y="70" width="187" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-27" value="Monthly Client&amp;nbsp;&lt;div&gt;Listing (sent by DOR)&amp;nbsp;&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1020" y="480" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-31" value="" style="swimlane;startSize=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1220" y="250" width="820" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-33" value="Previously, the progress report is sent out quarterly, but we aim to send out monthly" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="ooBP4RP4iMkbLxyPNMtn-31">
+          <mxGeometry x="10" width="470" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ooBP4RP4iMkbLxyPNMtn-34" value="Check student available in &quot;Student Appointment&quot;&amp;nbsp; (Access)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="ooBP4RP4iMkbLxyPNMtn-31">
+          <mxGeometry x="16.5" y="30" width="137" height="62" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
