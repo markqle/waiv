@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import generics
 from .serializers import (
     CaseStatusInfoSerializer,
@@ -27,56 +28,56 @@ from .models import (
 )
 
 
-class StudentPersonalInfoView(generics.ListCreateAPIView):
+class StudentPersonalInfoView(generics.CreateAPIView):
     queryset = StudentPersonalInfo.objects.all()
     serializer_class = StudentPersonalInfoSerializer
 
 
-class CaseStatusInfoView(generics.ListCreateAPIView):
+class CaseStatusInfoView(generics.CreateAPIView):
     queryset = CaseStatusInfo.objects.all()
     serializer_class = CaseStatusInfoSerializer
 
 
-class DorCounselorView(generics.ListCreateAPIView):
+class DorCounselorView(generics.CreateAPIView):
     queryset = DorCounselor.objects.all()
     serializer_class = DorCounselorSerializer
 
 
-class WaivServiceInfoView(generics.ListCreateAPIView):
+class WaivServiceInfoView(generics.CreateAPIView):
     queryset = WaivServiceInfo.objects.all()
     serializer_class = WaivServiceInfoSerializer
 
 
-class WaivStaffInfoView(generics.ListCreateAPIView):
+class WaivStaffInfoView(generics.CreateAPIView):
     queryset = WaivStaffInfo.objects.all()
     serializer_class = WaivStaffInfoSerializer
 
 
-class StudentDocView(generics.ListCreateAPIView):
+class StudentDocView(generics.CreateAPIView):
     queryset = StudentDoc.objects.all()
     serializer_class = StudentDocSerializer
 
 
-class DisabilityInfoView(generics.ListCreateAPIView):
+class DisabilityInfoView(generics.CreateAPIView):
     queryset = DisabilityInfo.objects.all()
     serializer_class = DisabilityInfoSerializer
 
 
-class MonthlyClientListingLogView(generics.ListCreateAPIView):
+class MonthlyClientListingLogView(generics.CreateAPIView):
     queryset = MonthlyClientListingLog.objects.all()
     serializer_class = MonthlyClientListingLogSerializer
 
 
-class StudentAcademicLogView(generics.ListCreateAPIView):
+class StudentAcademicLogView(generics.CreateAPIView):
     queryset = StudentAcademicLog.objects.all()
     serializer_class = StudentAcademicLogSerializer
 
 
-class StudentLogView(generics.ListCreateAPIView):
+class StudentLogView(generics.CreateAPIView):
     queryset = StudentLog.objects.all()
     serializer_class = StudentLogSerializer
 
 
-class CounselingLogView(generics.ListCreateAPIView):
+class CounselingLogView(generics.CreateAPIView):
     queryset = CounselingLog.objects.all()
     serializer_class = CounselingLogSerializer

@@ -29,4 +29,8 @@ python manage.py dumpdata --exclude=contenttypes > datadump.json
 THEN change credential to MySQL load that json in:
 python manage.py loaddata datadump.json
 
-test
+IF we change too much schema and don't really have any data in current database:
+rm your_app/migrations/*
+rm db.sqlite3
+python manage.py makemigrations
+python manage.py migrate
