@@ -28,3 +28,5 @@ python manage.py dumpdata --exclude=contenttypes > datadump.json
 
 THEN change credential to MySQL load that json in:
 python manage.py loaddata datadump.json
+
+test
