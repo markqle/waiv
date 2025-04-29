@@ -14,7 +14,14 @@
 // const appDiv = document.getElementById("app");
 // render(<App />, appDiv);
 import React, { Component } from 'react';
+import {render} from 'react-dom';
 import { createRoot } from 'react-dom/client'; 
+import HomePage from './HomePage';
+import StudentPage from './Student';
+import Counseling from './Counseling';
+import MonthlyListing from './MonthlyListing'
+import Employee from './Employee';
+import Profile from './Profile';
 
 export default class App extends Component {
     constructor(props) {
@@ -22,11 +29,19 @@ export default class App extends Component {
     }
 
     render() {
-        return <h1>Welcome to the WAIV App</h1>;
+        return (
+        <div>
+            <HomePage />
+            <Employee />
+            <StudentPage />
+            <Counseling />
+            <MonthlyListing />
+            <Profile />
+        </div>
+        );
     }
 }
 
-// Mount React to Django's <div id="app"></div>
 const appDiv = document.getElementById("app");
-const root = createRoot(appDiv); // ⚡ createRoot instead of render
-root.render(<App />); // ⚡ use root.render
+const root = createRoot(appDiv); 
+root.render(<App />); 

@@ -50,3 +50,10 @@ Install material UI - prebuilt component to style:
 npm install @material-ui/core -- this fits react 16 or 17
 npm install @mui/material @emotion/react @emotion/styled -- this fits later react like 18 and 19
 npm install @mui/icons-material
+
+
+Privilege:
+- Admin
+- IT
+- Employee - Program Coordinator: allow "Add students"
+- Employee: can only view students, edit student information, cannot add students
