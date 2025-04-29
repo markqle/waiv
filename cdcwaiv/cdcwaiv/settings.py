@@ -77,9 +77,18 @@ WSGI_APPLICATION = 'cdcwaiv.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    'default':{
+        'ENGINE':'mssql',                    # Must be "mssql"
+        'NAME':'SA-CDC-WorkAbility-Dev',     # DB name "test"
+        'HOST':'its-sqldag02', # <server>\<instance>
+        'PORT':'',                           # Keep it blank
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
 

@@ -18,7 +18,6 @@ import {render} from 'react-dom';
 import { createRoot } from 'react-dom/client'; 
 import HomePage from './HomePage';
 import StudentPage from './Student';
-import Counseling from './Counseling';
 import MonthlyListing from './MonthlyListing'
 import Employee from './Employee';
 import Profile from './Profile';
@@ -34,7 +33,6 @@ export default class App extends Component {
             <HomePage />
             <Employee />
             <StudentPage />
-            <Counseling />
             <MonthlyListing />
             <Profile />
         </div>
