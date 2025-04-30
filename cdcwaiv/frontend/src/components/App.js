@@ -17,10 +17,6 @@ import React, { Component } from 'react';
 import {render} from 'react-dom';
 import { createRoot } from 'react-dom/client'; 
 import HomePage from './HomePage';
-import StudentPage from './Student';
-import MonthlyListing from './MonthlyListing'
-import Employee from './Employee';
-import Profile from './Profile';
 
 export default class App extends Component {
     constructor(props) {
@@ -31,10 +27,6 @@ export default class App extends Component {
         return (
         <div>
             <HomePage />
-            <Employee />
-            <StudentPage />
-            <MonthlyListing />
-            <Profile />
         </div>
         );
     }

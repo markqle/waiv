@@ -52,8 +52,18 @@ npm install @mui/material @emotion/react @emotion/styled -- this fits later reac
 npm install @mui/icons-material
 
 
-Privilege:
+Working modules:
+- Employee (Program Coordinator / Director): 
+    - Login
+    - Add Student (Referred from DOR / BMAC)
+    - Edit Student
+    - Add Counseling session
+    - View Profile
 - Admin
 - IT
 - Employee - Program Coordinator: allow "Add students"
 - Employee: can only view students, edit student information, cannot add students
+
+Employee
+
+API view:
