@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from .models import (
     CaseStatusInfo,
-    DorCounselor,
+    # DorCounselor,
     WaivStaffInfo,
     WaivServiceInfo,
     StudentPersonalInfo,
     StudentDoc,
     DisabilityInfo,
-    MonthlyClientListingLog,
+    # MonthlyClientListingLog,
     StudentAcademicLog,
     StudentLog,
     CounselingLog
@@ -20,10 +20,10 @@ class CaseStatusInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DorCounselorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DorCounselor
-        fields = '__all__'
+# class DorCounselorSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = DorCounselor
+#         fields = '__all__'
 
 
 class WaivStaffInfoSerializer(serializers.ModelSerializer):
@@ -56,10 +56,10 @@ class DisabilityInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MonthlyClientListingLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MonthlyClientListingLog
-        fields = '__all__'
+# class MonthlyClientListingLogSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = MonthlyClientListingLog
+#         fields = '__all__'
 
 
 class StudentAcademicLogSerializer(serializers.ModelSerializer):

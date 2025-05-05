@@ -57,3 +57,36 @@ Privilege:
 - IT
 - Employee - Program Coordinator: allow "Add students"
 - Employee: can only view students, edit student information, cannot add students
+
+* Features & Module:
+Staff Login:
+- Add Student
+- Staff Profile
+- Add Counseling session
+- Manage student
+- Add document
+
+Admin/Program Counselor Login
+- Manage student
+- Manage staff
+- View Report / Dashboard
+- Manage monthly client listing
+
+Staff Working Module:
+1. Login
+2. View Profile
+3. View Report / Dashboard
+4. Add / View Counseling Note
+5. View Student
+6. Log out
+
+Admin Login
+1. Login
+2. Add/ View Student
+3. Add / View Staff
+4. Remove Student
+5. Remove Staff
+6. Add / View Counseling Note
+7. View Report / Dashboard
+8. Add monthly client listing
+9. Add document (optional)
