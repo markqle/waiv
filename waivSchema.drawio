@@ -2104,7 +2104,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="qWwM5sWVmI2LP-PdpvI5-114" value="monthly_client_listing_log" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;" vertex="1" parent="qWwM5sWVmI2LP-PdpvI5-1">
-          <mxGeometry x="-430" y="415" width="190" height="240" as="geometry" />
+          <mxGeometry x="-410" y="310" width="190" height="240" as="geometry" />
         </mxCell>
         <mxCell id="qWwM5sWVmI2LP-PdpvI5-115" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;html=1;" vertex="1" parent="qWwM5sWVmI2LP-PdpvI5-114">
           <mxGeometry y="30" width="190" height="30" as="geometry" />
@@ -2202,7 +2202,7 @@
             <mxPoint x="-20" y="350" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="-60" y="350" />
-              <mxPoint x="-60" y="460" />
+              <mxPoint x="-60" y="355" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -2210,7 +2210,7 @@
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="-120" y="210" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="-490" y="490" />
+              <mxPoint x="-490" y="385" />
               <mxPoint x="-490" y="-5" />
             </Array>
           </mxGeometry>
@@ -2441,7 +2441,7 @@
             <mxPoint x="-490" y="560" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="-490" y="520" />
-              <mxPoint x="-490" y="520" />
+              <mxPoint x="-490" y="415" />
             </Array>
           </mxGeometry>
         </mxCell>
