@@ -1,13 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import generics
+from .forms import StudentDocForm
 from .serializers import (
     CaseStatusInfoSerializer,
     DorCounselorSerializer,
     WaivServiceInfoSerializer,
-    WaivStaffInfoSerializer,
+    WaivUserSerializer,
     StudentPersonalInfoSerializer,
     StudentDocSerializer,
-    DisabilityInfoSerializer,
     MonthlyClientListingLogSerializer,
     StudentAcademicLogSerializer,
     StudentLogSerializer,
@@ -16,68 +16,75 @@ from .serializers import (
 from .models import (
     CaseStatusInfo,
     DorCounselor,
-    WaivStaffInfo,
+    WaivUser,
     WaivServiceInfo,
     StudentPersonalInfo,
     StudentDoc,
-    DisabilityInfo,
     MonthlyClientListingLog,
     StudentAcademicLog,
     StudentLog,
     CounselingLog
 )
 
+def showDemoPage(request):
+    return render(request, "demo.html")
 
-class StudentPersonalInfoView(generics.ListCreateAPIView):
+def upload_doc(request):
+    if request.method == "POST":
+        form = StudentDocForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("success_url")
+    else:
+        form = StudentDocForm()
+    return render(request, "upload_doc.html", {"form": form})
+
+
+class StudentPersonalInfoView(generics.ListAPIView):
     queryset = StudentPersonalInfo.objects.all()
     serializer_class = StudentPersonalInfoSerializer
 
 
-class CaseStatusInfoView(generics.ListCreateAPIView):
+class CaseStatusInfoView(generics.ListAPIView):
     queryset = CaseStatusInfo.objects.all()
     serializer_class = CaseStatusInfoSerializer
 
 
-class DorCounselorView(generics.ListCreateAPIView):
+class DorCounselorView(generics.ListAPIView):
     queryset = DorCounselor.objects.all()
     serializer_class = DorCounselorSerializer
 
 
-class WaivServiceInfoView(generics.ListCreateAPIView):
+class WaivServiceInfoView(generics.ListAPIView):
     queryset = WaivServiceInfo.objects.all()
     serializer_class = WaivServiceInfoSerializer
 
 
-class WaivStaffInfoView(generics.ListCreateAPIView):
-    queryset = WaivStaffInfo.objects.all()
-    serializer_class = WaivStaffInfoSerializer
+class WaivUserView(generics.ListAPIView):
+    queryset = WaivUser.objects.all()
+    serializer_class = WaivUserSerializer
 
 
-class StudentDocView(generics.ListCreateAPIView):
+class StudentDocView(generics.ListAPIView):
     queryset = StudentDoc.objects.all()
     serializer_class = StudentDocSerializer
 
 
-class DisabilityInfoView(generics.ListCreateAPIView):
-    queryset = DisabilityInfo.objects.all()
-    serializer_class = DisabilityInfoSerializer
-
-
-class MonthlyClientListingLogView(generics.ListCreateAPIView):
+class MonthlyClientListingLogView(generics.ListAPIView):
     queryset = MonthlyClientListingLog.objects.all()
     serializer_class = MonthlyClientListingLogSerializer
 
 
-class StudentAcademicLogView(generics.ListCreateAPIView):
+class StudentAcademicLogView(generics.ListAPIView):
     queryset = StudentAcademicLog.objects.all()
     serializer_class = StudentAcademicLogSerializer
 
 
-class StudentLogView(generics.ListCreateAPIView):
+class StudentLogView(generics.ListAPIView):
     queryset = StudentLog.objects.all()
     serializer_class = StudentLogSerializer
 
 
-class CounselingLogView(generics.ListCreateAPIView):
+class CounselingLogView(generics.ListAPIView):
     queryset = CounselingLog.objects.all()
     serializer_class = CounselingLogSerializer
