@@ -1,14 +1,23 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 
-class DorCounselor(models.Model):
-    dor_counselor_id = models.AutoField(primary_key=True)
-    dor_counselor_name = models.CharField(max_length=100)
-    dor_counselor_email = models.EmailField()
+# class DorCounselor(models.Model):
+#     dor_counselor_id = models.AutoField(primary_key=True)
+#     dor_counselor_name = models.CharField(max_length=100)
+#     dor_counselor_email = models.EmailField()
 
-    def __str__(self):
-        return f"{self.dor_counselor_name}"
-
+#     def __str__(self):
+#         return f"{self.dor_counselor_name}"
+    
+# class MonthlyClientListingLog(models.Model):
+#     participant_id = models.CharField(max_length=20, unique=True, primary_key=True)
+#     case_status_code = models.ForeignKey(CaseStatusInfo, on_delete=models.SET_NULL, null=True)
+#     dor_counselor = models.ForeignKey(DorCounselor, on_delete=models.SET_NULL, null=True)
+#     fund_begin_date = models.DateField()
+#     fund_end_date = models.DateField(null=True, blank=True)
+#     district = models.CharField(max_length=100)
+#     last_updated = models.DateField()
 
 class CaseStatusInfo(models.Model):
     case_status_code = models.CharField(max_length=10, primary_key=True)
@@ -17,6 +26,15 @@ class CaseStatusInfo(models.Model):
     def __str__(self):
         return f"{self.case_description}"
 
+class WaivStaffInfo(AbstractUser):
+    POSITION_CHOICES = [
+        ("counselor",    "Counselor"),
+        ("case_manager", "Case Manager"),
+        ("IT",          "IT"),
+        ("admin",        "Administrator"),
+    ]
+    position        = models.CharField(max_length=30, choices=POSITION_CHOICES, default="counselor")
+    is_case_manager = models.BooleanField(default=False)
 
 class MonthlyClientListingLog(models.Model):
     participant_id = models.CharField(max_length=20, unique=True, primary_key=True)
@@ -37,14 +55,10 @@ class WaivUser(AbstractUser):
     ]
     position = models.CharField(max_length=30, choices=POSITION_CHOICES, default="counselor")
 
-    def __str__(self):
-        return self.get_full_name() or self.username
 
 class StudentPersonalInfo(models.Model):
     csulb_id = models.CharField(primary_key=True, max_length=15)
-    participant_id = models.OneToOneField(
-        MonthlyClientListingLog, on_delete=models.SET_NULL, null=True, blank=True, to_field='participant_id'
-    )
+    participant_id = models.CharField(max_length=15, unique=True)
     last_name = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
     birthdate = models.DateField()
@@ -105,6 +119,7 @@ class CounselingLog(models.Model):
     staff        = models.ForeignKey(WaivUser,  on_delete=models.SET_NULL, null=True, related_name="sessions")
     date_checkin = models.DateField()
     case_note = models.TextField()
+    updated_date = models.DateField()
 
 class DocumentType(models.Model):
     code        = models.CharField(
@@ -138,7 +153,6 @@ class StudentDoc(models.Model):
 
     def __str__(self):
         return f"{self.student}: {', '.join(str(dt) for dt in self.doc_types.all())}"
-
 
 class StudentAcademicLog(models.Model):
     academic_log_id = models.AutoField(primary_key=True)

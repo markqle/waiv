@@ -19,10 +19,10 @@ class CaseStatusInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DorCounselorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DorCounselor
-        fields = '__all__'
+# class DorCounselorSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = DorCounselor
+#         fields = '__all__'
 
 
 class MonthlyClientListingLogSerializer(serializers.ModelSerializer):
