@@ -1,16 +1,13 @@
-from django.shortcuts import render
-from rest_framework import generics, status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
+from django.shortcuts import render, redirect
+from rest_framework import generics
+from .forms import StudentDocForm
 from .serializers import (
     CaseStatusInfoSerializer,
     DorCounselorSerializer,
     WaivServiceInfoSerializer,
-    WaivStaffInfoSerializer,
+    WaivUserSerializer,
     StudentPersonalInfoSerializer,
     StudentDocSerializer,
-    DisabilityInfoSerializer,
     MonthlyClientListingLogSerializer,
     StudentAcademicLogSerializer,
     StudentLogSerializer,
@@ -19,16 +16,28 @@ from .serializers import (
 from .models import (
     CaseStatusInfo,
     DorCounselor,
-    WaivStaffInfo,
+    WaivUser,
     WaivServiceInfo,
     StudentPersonalInfo,
     StudentDoc,
-    DisabilityInfo,
     MonthlyClientListingLog,
     StudentAcademicLog,
     StudentLog,
     CounselingLog
 )
+
+def showDemoPage(request):
+    return render(request, "demo.html")
+
+def upload_doc(request):
+    if request.method == "POST":
+        form = StudentDocForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("success_url")
+    else:
+        form = StudentDocForm()
+    return render(request, "upload_doc.html", {"form": form})
 
 
 class StudentPersonalInfoView(generics.ListAPIView):
@@ -51,19 +60,14 @@ class WaivServiceInfoView(generics.ListAPIView):
     serializer_class = WaivServiceInfoSerializer
 
 
-class WaivStaffInfoView(generics.ListAPIView):
-    queryset = WaivStaffInfo.objects.all()
-    serializer_class = WaivStaffInfoSerializer
+class WaivUserView(generics.ListAPIView):
+    queryset = WaivUser.objects.all()
+    serializer_class = WaivUserSerializer
 
 
 class StudentDocView(generics.ListAPIView):
     queryset = StudentDoc.objects.all()
     serializer_class = StudentDocSerializer
-
-
-class DisabilityInfoView(generics.ListAPIView):
-    queryset = DisabilityInfo.objects.all()
-    serializer_class = DisabilityInfoSerializer
 
 
 class MonthlyClientListingLogView(generics.ListAPIView):

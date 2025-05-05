@@ -53,17 +53,35 @@ npm install @mui/icons-material
 
 
 Working modules:
-- Employee (Program Coordinator / Director): 
+- Counselor : 
+    - Login
+    - Edit Student
+    - Add Counseling session
+    - View Profile
+    - View dashboard
+    - Log out
+- Employee (Program Coordinator / Director)
     - Login
     - Add Student (Referred from DOR / BMAC)
     - Edit Student
     - Add Counseling session
     - View Profile
-- Admin
-- IT
-- Employee - Program Coordinator: allow "Add students"
-- Employee: can only view students, edit student information, cannot add students
+    - View dashboard
+    - Log out
+- Admin:
+    - Login
+    - Add employee
+    - Add student
+    - Edit student
+    - Remove student
+    - View profile
+    - View staff
+    - Remove staff
+    - Add counseling session
+    - Edit counseling session
+    - Remove counseling session
+    - Log out
 
-Employee
+
 
 API view:
