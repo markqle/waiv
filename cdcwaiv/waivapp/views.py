@@ -1,33 +1,26 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth    import authenticate, login
+from django.http import HttpResponse, HttpResponseRedirect
+from waivapp.EmailBackEnd import EmailBackEnd
 from rest_framework import generics
 from .forms import StudentDocForm
-from .serializers import (
-    CaseStatusInfoSerializer,
-    DorCounselorSerializer,
-    WaivServiceInfoSerializer,
-    WaivUserSerializer,
-    StudentPersonalInfoSerializer,
-    StudentDocSerializer,
-    MonthlyClientListingLogSerializer,
-    StudentAcademicLogSerializer,
-    StudentLogSerializer,
-    CounselingLogSerializer
-)
-from .models import (
-    CaseStatusInfo,
-    DorCounselor,
-    WaivUser,
-    WaivServiceInfo,
-    StudentPersonalInfo,
-    StudentDoc,
-    MonthlyClientListingLog,
-    StudentAcademicLog,
-    StudentLog,
-    CounselingLog
-)
 
 def showDemoPage(request):
     return render(request, "demo.html")
+
+def showLoginPage(request):
+    return render(request,"login_page.html")
+
+def doLogin(request):
+    if request.method!="POST":
+        return HttpResponse("<h2>Method is not allowed</h2>")
+    else:
+        user=EmailBackEnd.authenticate(request, request.POST.get("email"),request.POST.get("password"))
+        if user!=None:
+            login(request,user)
+            return HttpResponse("Email: "+request.POST.get("email")+" Password: "+request.POST.get("password"))
+        else:
+            return HttpResponse("Invalid Login")
 
 def upload_doc(request):
     if request.method == "POST":
@@ -38,53 +31,3 @@ def upload_doc(request):
     else:
         form = StudentDocForm()
     return render(request, "upload_doc.html", {"form": form})
-
-
-class StudentPersonalInfoView(generics.ListAPIView):
-    queryset = StudentPersonalInfo.objects.all()
-    serializer_class = StudentPersonalInfoSerializer
-
-
-class CaseStatusInfoView(generics.ListAPIView):
-    queryset = CaseStatusInfo.objects.all()
-    serializer_class = CaseStatusInfoSerializer
-
-
-class DorCounselorView(generics.ListAPIView):
-    queryset = DorCounselor.objects.all()
-    serializer_class = DorCounselorSerializer
-
-
-class WaivServiceInfoView(generics.ListAPIView):
-    queryset = WaivServiceInfo.objects.all()
-    serializer_class = WaivServiceInfoSerializer
-
-
-class WaivUserView(generics.ListAPIView):
-    queryset = WaivUser.objects.all()
-    serializer_class = WaivUserSerializer
-
-
-class StudentDocView(generics.ListAPIView):
-    queryset = StudentDoc.objects.all()
-    serializer_class = StudentDocSerializer
-
-
-class MonthlyClientListingLogView(generics.ListAPIView):
-    queryset = MonthlyClientListingLog.objects.all()
-    serializer_class = MonthlyClientListingLogSerializer
-
-
-class StudentAcademicLogView(generics.ListAPIView):
-    queryset = StudentAcademicLog.objects.all()
-    serializer_class = StudentAcademicLogSerializer
-
-
-class StudentLogView(generics.ListAPIView):
-    queryset = StudentLog.objects.all()
-    serializer_class = StudentLogSerializer
-
-
-class CounselingLogView(generics.ListAPIView):
-    queryset = CounselingLog.objects.all()
-    serializer_class = CounselingLogSerializer
