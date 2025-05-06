@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
-from waivapp import views
+from waivapp import views, manager
 from cdcwaiv import settings
 
 urlpatterns = [
@@ -26,5 +26,8 @@ urlpatterns = [
     path('', views.showLoginPage),
     path('get_user_details', views.GetUserDetails),
     path('logout_user', views.logout_user),
-    path('doLogin', views.doLogin)
+    path('doLogin', views.doLogin),
+    path('admin_home', manager.admin_home),
+    path('add_staff', manager.add_staff),
+    path('add_staff_save', manager.add_staff_save)
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

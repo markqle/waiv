@@ -59,18 +59,23 @@ Working modules:
     - View Profile
     - View dashboard
     - Log out
-- Employee (Program Coordinator / Director)
+- Manager Employee (Program Coordinator / Director)
     - Login
     - Add Student (Referred from DOR / BMAC)
     - Edit Student
+    - Add Staff
+    - Manage Staff
     - Add Counseling session
+    - Edit Counseling session
     - View Profile
     - View dashboard
+    - Add monthly client listing
+    - Add monthly report
     - Log out
 - Admin:
     - Login
-    - Add employee
     - Add student
+    - Add employee
     - Edit student
     - Remove student
     - View profile
@@ -79,6 +84,10 @@ Working modules:
     - Add counseling session
     - Edit counseling session
     - Remove counseling session
+    - Add monthly client listing
+    - Manage monthly client listing
+    - Add monthly report
+    - Manage monthly report
     - Log out
 
 
