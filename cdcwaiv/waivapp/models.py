@@ -34,8 +34,8 @@ class WaivUser(AbstractUser):
     """Extends Django’s built-in User: handles login, is_active, permissions, etc."""
     POSITION_CHOICES = (
         ("counselor",    "Counselor"),
-        ("case_manager", "Case Manager")
-        # ("admin",        "Administrator"),
+        ("case_manager", "Case Manager"),
+        ("admin",        "Administrator"),
         # add more roles as needed
     )
     position = models.CharField(max_length=30, choices=POSITION_CHOICES, default="counselor")
