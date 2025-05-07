@@ -35,23 +35,23 @@ class WaivUser(AbstractUser):
     POSITION_CHOICES = (
         ("counselor",    "Counselor"),
         ("case_manager", "Case Manager"),
-        ("admin",        "Administrator"),
-        # add more roles as needed
+        # ("admin",        "Administrator"),
     )
     position = models.CharField(max_length=30, choices=POSITION_CHOICES, default="counselor")
 
-class CaseManager(models.Model):
-    id=models.AutoField(primary_key=True)
-    admin=models.OneToOneField(WaivUser, on_delete=models.CASCADE)
-    updated_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
+# class CaseManager(models.Model):
+#     id=models.AutoField(primary_key=True)
+#     admin=models.OneToOneField(WaivUser, on_delete=models.CASCADE)
+#     position=models.TextField()
+#     updated_at = models.DateTimeField(auto_now_add=True)
+#     objects = models.Manager()
 
-class WaivCounselor(models.Model):
-    id=models.AutoField(primary_key=True)
-    admin=models.OneToOneField(WaivUser, on_delete=models.CASCADE)
-    address=models.TextField()
-    updated_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
+# class WaivCounselor(models.Model):
+#     id=models.AutoField(primary_key=True)
+#     admin=models.OneToOneField(WaivUser, on_delete=models.CASCADE)
+#     position=models.TextField()
+#     updated_at = models.DateTimeField(auto_now_add=True)
+#     objects = models.Manager()
 
 class StudentPersonalInfo(models.Model):
     csulb_id = models.CharField(primary_key=True, max_length=15, db_column="csulb_id")

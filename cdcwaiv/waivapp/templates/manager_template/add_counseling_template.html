@@ -1,6 +1,6 @@
 {% extends 'manager_template/base_template.html' %}
 {% block page_title %}
-Add WAIV Staff
+Add Counseling Session
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->
@@ -8,11 +8,10 @@ Add WAIV Staff
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <p>**<strong>Note</strong>: This is only for <strong>Managers</strong> to create credentials for <strong> WAIV Counselors</strong>.</p>
                     <!-- general form elements -->
                     <div class="card card-primary">
                       <div class="card-header">
-                        <h3 class="card-title">Add Staff</h3>
+                        <h3 class="card-title">Add Counseling Session</h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
@@ -26,25 +25,6 @@ Add WAIV Staff
                           <div class="form-group">
                             <label>Username</label>
                             <input type="text" class="form-control" placeholder="Username" name="username">
-                          </div>
-                          <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" placeholder="Password" name="password">
-                          </div>
-                          <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" placeholder="First Name" name="first_name">
-                          </div>
-                          <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" placeholder="Last Name" name="last_name">
-                          </div>
-                          <div class="form-group">
-                            <label>Select Position</label>
-                            <select class="form-control" name="position">
-                              <option>counselor</option>
-                              <option>case_manager</option>
-                            </select>
                           </div>
                           <div class="form-group">
                             {% if messages %}
