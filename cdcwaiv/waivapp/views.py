@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from waivapp.EmailBackEnd import EmailBackEnd
 from rest_framework import generics
 from .forms import StudentDocForm
+from .models import StudentPersonalInfo, WaivUser
 
 def showDemoPage(request):
     return render(request, "demo.html")
@@ -34,12 +35,3 @@ def logout_user(request):
     logout(request)
     return HttpResponseRedirect("/")
 
-def upload_doc(request):
-    if request.method == "POST":
-        form = StudentDocForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("success_url")
-    else:
-        form = StudentDocForm()
-    return render(request, "upload_doc.html", {"form": form})

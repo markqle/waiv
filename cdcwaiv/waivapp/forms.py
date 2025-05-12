@@ -1,5 +1,5 @@
 from django import forms
-from .models import StudentDoc
+from .models import StudentDoc, StudentPersonalInfo, WaivUser
 
 class StudentDocForm(forms.ModelForm):
     class Meta:
