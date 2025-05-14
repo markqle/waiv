@@ -91,5 +91,5 @@ Working modules:
     - Log out
 
 
-
-API view:
+- For V2, handling adding files to the page: <br>
+https://www.youtube.com/watch?v=lKyH_ZGtvwM

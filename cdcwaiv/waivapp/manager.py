@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
-from waivapp.models import WaivUser, StudentPersonalInfo
+from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog
 def admin_home(request):
     return render(request, "manager_template/home_content.html")
 
@@ -31,10 +31,11 @@ def add_student(request):
     # Fetch only case managers and counselors
     case_managers = WaivUser.objects.filter(position="case_manager")
     counselors   = WaivUser.objects.filter(position="counselor")
-
+    case_status = CaseStatusInfo.objects.all()
     return render(request, "manager_template/add_student_template.html", {
         "case_managers": case_managers,
         "counselors":    counselors,
+        "case_status": case_status,
     })
 
 def add_student_save(request):
@@ -54,12 +55,20 @@ def add_student_save(request):
         intake_status = request.POST.get('intake_status') == "1"
         disability_type = request.POST.get('disability_type')
         disability_detail = request.POST.get('disability_detail')
+        academic_plan = request.POST.get('academic_plan')
+        academic_level = request.POST.get('academic_level')
+        gpa = request.POST.get('gpa')
         case_manager_id = request.POST.get('case_manager') or None
         dedicated_staff_id = request.POST.get('dedicated_staff') or None
+        cs_code = request.POST.get('case_status')
+        if cs_code:
+            status = CaseStatusInfo.objects.get(pk=cs_code)
         try:
-            StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=dob, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enroll_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
+            student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=dob, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enroll_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
+            StudentLog.objects.create(csulb_id=student, case_status_code=status)
+            StudentAcademicLog.objects.create(csulb_id_id=student.csulb_id,academic_plan=academic_plan, academic_level=academic_level, gpa=gpa)
             messages.success(request, "Successfully Added new student")
             return HttpResponseRedirect("/add_student")
-        except:
-            messages.error(request, "Failed to Add new student")
+        except Exception as e:
+            messages.error(request, f"Failed to Add new student: {e}")
             return HttpResponseRedirect("/add_student")
