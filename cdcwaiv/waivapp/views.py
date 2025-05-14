@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from waivapp.EmailBackEnd import EmailBackEnd
 from rest_framework import generics
-from .forms import StudentDocForm
 from .models import StudentPersonalInfo, WaivUser
 
 def showDemoPage(request):
