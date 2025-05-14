@@ -114,11 +114,6 @@
                            name="email"
                            placeholder="Enter email">
                   </div>
-                </div>
-
-                <!-- RIGHT COLUMN -->
-                <div class="col-md-6">
-
                   <div class="form-group">
                     <label for="id_phone">Phone</label>
                     <input type="text"
@@ -127,7 +122,6 @@
                            name="phone"
                            placeholder="1234567890">
                   </div>
-                  
                   <div class="form-group">
                     <label for="id_city">City</label>
                     <input type="text"
@@ -136,6 +130,12 @@
                            name="city"
                            placeholder="City">
                   </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-md-6">
+
+
                   <div class="form-group">
                     <label for="id_enroll_date">Enrollment Date</label>
                     <input type="date"
@@ -206,39 +206,147 @@
                     </select>
                   </div>
                   
-                    <div class="form-group">
-                        <label>Student Documents</label>
-                        <div class="icheck-primary">
-                          <input type="checkbox" id="checkboxwaivreferral" name='checkboxwaivreferral'>
-                          <label for="checkboxwaivreferral">
-                              WAIV Referral Form
-                          </label>
+                   <div class="form-group">
+                      <label>Student Documents</label>
+
+                      <!-- WAIV Referral Form row -->
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="checkbox_waivreferral" name="checkbox_waivreferral">
+                            <label for="checkbox_waivreferral">WAIV Referral Form</label>
+                          </div>
                         </div>
-                        <div class="icheck-primary">
-                          <input type="checkbox" id="checkboxdr260" name='checkboxdr260'>
-                          <label for="checkboxdr260">
-                              DR 260 - Consent To Release And Obtain Information
-                          </label>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="received_waivreferral"
+                            name="received_waivreferral"
+                            placeholder="Received Date">
                         </div>
-                        <div class="icheck-primary">
-                          <input type="checkbox" id="checkboxdr222" name='checkboxdr222'>
-                          <label for="checkboxdr222">
-                              DR 222 - VR Services Application
-                          </label>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="expiry_waivreferral"
+                            name="expiry_waivreferral"
+                            placeholder="Expiry Date">
                         </div>
-                        <div class="icheck-primary">
-                          <input type="checkbox" id="checkboxipe" name='checkboxipe'>
-                          <label for="checkboxipe">
-                              DR 215 - Individualized Plan Employment (IPE)
-                          </label>
+                      </div>
+
+                      <!-- DR 260 row -->
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="checkbox_dr260" name="checkbox_dr260">
+                            <label for="checkbox_dr260">DR 260 – Consent To Release</label>
+                          </div>
                         </div>
-                        <div class="icheck-primary">
-                          <input type="checkbox" id="checkboxcasenote" name='checkboxcasenote'>
-                          <label for="checkboxcasenote">
-                              Case Note Authorization
-                          </label>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="received_dr260"
+                            name="received_dr260"
+                            placeholder="Received Date">
                         </div>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="expiry_dr260"
+                            name="expiry_dr260"
+                            placeholder="Expiry Date">
+                        </div>
+                      </div>
+                      <!-- DR 215 - IPE row -->
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="checkbox_dr215" name="checkbox_dr215">
+                            <label for="checkbox_dr215">DR 215 – Individualized Plan Employment (IPE)</label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="received_dr215"
+                            name="received_dr215"
+                            placeholder="Received Date">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="expiry_dr215"
+                            name="expiry_dr215"
+                            placeholder="Expiry Date">
+                        </div>
+                      </div>
+                      <!-- DR 222 - VR Services Application-->
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="checkbox_dr222" name="checkbox_dr222">
+                            <label for="checkbox_dr222">DR 222 – VR Services Application</label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="received_dr222"
+                            name="received_dr222"
+                            placeholder="Received Date">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="expiry_dr222"
+                            name="expiry_dr222"
+                            placeholder="Expiry Date">
+                        </div>
+                      </div>
+                      <!-- Case Note Authorization-->
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="checkbox_casenote" name="checkbox_casenote">
+                            <label for="checkbox_casenote">Case Note Authorization</label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="received_casenote"
+                            name="received_casenote"
+                            placeholder="Received Date">
+                        </div>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            id="expiry_casenote"
+                            name="expiry_casenote"
+                            placeholder="Expiry Date">
+                        </div>
+                      </div>
                     </div>
+
                 </div>
 
               </div><!-- /.row -->
