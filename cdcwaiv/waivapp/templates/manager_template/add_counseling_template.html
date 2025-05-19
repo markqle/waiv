@@ -1,55 +1,111 @@
 {% extends 'manager_template/base_template.html' %}
-{% block page_title %}
-Add Counseling Session
-{% endblock page_title %}
+{% block page_title %}Add Counseling Note{% endblock %}
+
 {% block main_content %}
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- general form elements -->
-                    <div class="card card-primary">
-                      <div class="card-header">
-                        <h3 class="card-title">Add Counseling Session</h3>
-                      </div>
-                      <!-- /.card-header -->
-                      <!-- form start -->
-                      <form role="form" action="/add_staff_save" method="post">
-                            {% csrf_token %}
-                        <div class="card-body">
-                          <div class="form-group">
-                            <label>Email address</label>
-                            <input type="email" class="form-control" name="email" placeholder="Enter email">
-                          </div>
-                          <div class="form-group">
-                            <label>Username</label>
-                            <input type="text" class="form-control" placeholder="Username" name="username">
-                          </div>
-                          <div class="form-group">
-                            {% if messages %}
-                             {% for message in messages %}
-                             {% if message.tags == 'error' %}
-                             <div class="alert alert-danger" style="margin-top: 10px">{{ message }}</div>
-                             {% endif %}
-                             {% if message.tags == 'success' %}
-                             <div class="alert alert-success" style="margin-top: 10px">{{ message }}</div>
-                             {% endif %}
-                             {% endfor %}
-                           {% endif %}
-                         </div>
-                        </div>
-                        <!-- /.card-body -->
-        
-                        <div class="card-footer">
-                          <button type="submit" class="btn btn-primary btn-block">Submit</button>
-                        </div>
-                      </form>
-                    </div>
-                    <!-- /.card -->
-        
-                  </div>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+
+        {# flash messages #}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Add Counseling Note</h3>
+          </div>
+
+          <form role="form" action='add_counseling_save' method="post">
+            {% csrf_token %}
+            <div class="card-body">
+
+              <!-- Student selector -->
+              <div class="form-group">
+                <label for="student_search">Student</label>
+                <!-- filter box -->
+                <input
+                  type="text"
+                  id="student_search"
+                  class="form-control mb-2"
+                  placeholder="Type CSULB ID or name to filter…"
+                />
+
+                <!-- real dropdown -->
+                <select class="form-control"
+                        id="id_student"
+                        name="student_id"
+                        style="width:100%;">
+                  <option value="">— Select Student —</option>
+                  {% for student in students %}
+                    <option value="{{ student.csulb_id }}">
+                      {{ student.csulb_id }} – {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- Staff checkboxes -->
+              <div class="form-group">
+                <label>Staff</label>
+                <select class="form-control select"
+                        id="id_staff"
+                        name="staff_id"
+                        style="width: 100%;">
+                  <option value="">— Select Staff —</option>
+                  {% for staff in staff_list %}
+                    <option value="{{ staff.id }}">
+                      {{ staff.first_name }} {{ staff.last_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_datecheckin">Check In Date</label>
+                <input type="date"
+                           class="form-control"
+                           id="id_datecheckin"
+                           name="datecheckin">
+              </div>
+              <!-- Case note text -->
+              <div class="form-group">
+                <label for="id_case_note">Case Note</label>
+                <textarea class="form-control"
+                          id="id_case_note"
+                          name="case_note"
+                          rows="4"
+                          placeholder="Enter student case note here…"></textarea>
+              </div>
+
+              <!-- Service type dropdown -->
+              <div class="form-group">
+                <label for="id_service_type">Service Type</label>
+                <select class="form-control"
+                        id="id_service_type"
+                        name="service_type">
+                  <option value="">— Select Service Type —</option>
+                  {% for service in service_types %}
+                        <option value="{{ service.service_type }}">{{ service.service_type }} - {{ service.service_description }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+            </div><!-- /.card-body -->
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block">
+                Save Note
+              </button>
             </div>
-        </div>
-      </section>
-{% endblock main_content %}
+          </form>
+
+        </div><!-- /.card -->
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+{% endblock %}

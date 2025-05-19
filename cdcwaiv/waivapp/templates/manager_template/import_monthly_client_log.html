@@ -1,0 +1,62 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}Import Monthly Client Listing{% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+        <p>**<strong>Note</strong>: You have to <strong>format</strong> the document first, drop the "Name" column, and make sure the first name of DOR Counselors are capitalized</p>
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Upload CSV / Excel</h3>
+          </div>
+
+          <form method="post"
+                enctype="multipart/form-data"
+                action="/import_monthly_client_listing/">
+
+            {% csrf_token %}
+            <div class="card-body">
+
+              <div class="form-group">
+                <label for="id_file">
+                  Select file <small class="text-muted">(CSV or .xlsx)</small>
+                </label>
+                <input type="file"
+                       name="file"
+                       id="id_file"
+                       class="form-control-file"
+                       accept=".csv,.xlsx"
+                       required>
+                <small class="form-text text-muted">
+                  Your file must have these headers (exactly):<br>
+                  <code>
+                    Participant_ID, Fund_Long_Name, Staff_Name,<br>
+                    Case_Status, Closure_Date,<br>
+                    Case_Contract_Fund_Source_Start_Date,<br>
+                    Case_Contract_Fund_Source_End_Date, Dist
+                  </code>
+                </small>
+              </div>
+
+            </div><!-- /.card-body -->
+
+            <div class="card-footer text-right">
+              <button type="submit" class="btn btn-primary">
+                Upload and Parse
+              </button>
+            </div>
+          </form>
+
+        </div><!-- /.card -->
+
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}Monthly Client Listing{% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+
+    {# Flash messages #}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    <div class="card card-secondary">
+      <div class="card-header">
+        <h3 class="card-title">Filter by Updated Date</h3>
+      </div>
+      <div class="card-body">
+        <form method="get" action="/monthly_client_listing/">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="filter_updated_date">Updated Date</label>
+                <input type="date"
+                       id="filter_updated_date"
+                       name="updated_date"
+                       class="form-control"
+                       value="{{ request.GET.updated_date|default_if_none:'' }}">
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary">
+                Apply
+              </button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <a href="{% url 'monthly_client_listing' %}" class="btn btn-outline-secondary">
+                Clear
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Client Listing</h3>
+      </div>
+      <div class="card-body table-responsive p-0" style="max-height: 500px;">
+        <table class="table table-hover text-nowrap">
+          <thead>
+            <tr>
+              <th>Participant ID</th>
+              <th>Case Status</th>
+              <th>Counselor</th>
+              <th>Fund Begin</th>
+              <th>Fund End</th>
+              <th>Closure Date</th>
+              <th>District</th>
+              <th>Updated Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+              <tr>
+                <td>{{ log.participant_id }}</td>
+                <td>{{ log.case_status_code.case_status_code }}</td>
+                <td>{{ log.dor_counselor }}</td>
+                <td>{{ log.fund_begin_date }}</td>
+                <td>{{ log.fund_end_date|default_if_none:'—' }}</td>
+                <td>{{ log.closure_date|default_if_none:'—' }}</td>
+                <td>{{ log.district }}</td>
+                <td>{{ log.updated_date }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="8" class="text-center">No records found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer clearfix">
+
+    </div>
+
+    </div>
+
+  </div><!-- /.container-fluid -->
+</section>
+{% endblock %}
