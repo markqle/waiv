@@ -37,14 +37,10 @@ urlpatterns = [
     path('import_monthly_client_listing/',manager.import_monthly_client_listing, name='import_monthly_client_listing'),
     path('monthly_client_listing/', manager.monthly_client_listing, name='monthly_client_listing'),
     path('manage_staff', manager.manage_staff),
-     # Manage students list
+    path('edit_staff/<str:staff_id>', manager.edit_staff),
+    path('edit_staff_save', manager.edit_staff_save),
     path('manage_student/', manager.manage_student, name='manage_student'),
-
-    # ** EDIT STUDENT **
-    path(
-      'student/<str:csulb_id>/edit/',
-      manager.edit_student,
-      name='edit_student'
-    ),
+    path('edit_student/<str:csulb_id>/', manager.edit_student, name='edit_student'),
+     path('edit_student/<str:csulb_id>/save/', manager.edit_student_save, name='edit_student_save'),
     path('view_counseling', manager.view_counseling),
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

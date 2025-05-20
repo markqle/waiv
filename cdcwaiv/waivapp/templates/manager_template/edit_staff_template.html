@@ -1,0 +1,81 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}
+Edit WAIV Staff | Name: <strong>{{ staff.first_name }} {{ staff.last_name }}</strong> | ID: <strong>{{ staff.id }}</strong>
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>**<strong>Note</strong>: This is only for <strong>Managers</strong> to edit credentials for <strong> WAIV Counselors</strong>.</p>
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Edit Staff</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/edit_staff_save" method="post">
+                            {% csrf_token %}
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label>Email address</label>
+                            <input type="email" class="form-control" name="email" placeholder="Enter email" value="{{staff.email}}">
+                          </div>
+                          <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" placeholder="Username" name="username" value="{{staff.username}}">
+                          </div>
+                          <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" placeholder="First Name" name="first_name" value="{{staff.first_name}}">
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" placeholder="Last Name" name="last_name" value="{{staff.last_name}}">
+                            <input type="hidden" name="staff_id" value="{{staff.id}}">
+                          </div>
+                          <div class="form-group">
+                            <label for="id_position">Select Position</label>
+                            <select class="form-control" name="position" id="id_position">
+                              <option value="counselor"
+                                {% if staff.position == "counselor" %}selected{% endif %}
+                              >
+                                Counselor
+                              </option>
+                              <option value="case_manager"
+                                {% if staff.position == "case_manager" %}selected{% endif %}
+                              >
+                                Case Manager
+                              </option>
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            {% if messages %}
+                             {% for message in messages %}
+                             {% if message.tags == 'error' %}
+                             <div class="alert alert-danger" style="margin-top: 10px">{{ message }}</div>
+                             {% endif %}
+                             {% if message.tags == 'success' %}
+                             <div class="alert alert-success" style="margin-top: 10px">{{ message }}</div>
+                             {% endif %}
+                             {% endfor %}
+                           {% endif %}
+                         </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Save</button>
+                        </div>
+                      </form>
+                    </div>
+                    <!-- /.card -->
+        
+                  </div>
+            </div>
+        </div>
+      </section>
+{% endblock main_content %}

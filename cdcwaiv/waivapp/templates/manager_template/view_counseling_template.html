@@ -1,26 +1,28 @@
 {% extends 'manager_template/base_template.html' %}
-
 {% block page_title %}View WAIV Counseling Log{% endblock page_title %}
-
 {% block main_content %}
 <section class="content">
   <div class="container-fluid">
 
     <div class="card mb-4">
       <div class="card-header">
-        <h2 class="card-title">Search Student</h2>
+        <h2 class="card-title">Search &amp; Filter Students</h2>
       </div>
       <div class="card-body">
         <form method="get" class="form-inline">
+
+          <!-- Text search -->
           <div class="form-group mr-2">
             <input
               type="text"
               name="search"
               value="{{ search }}"
               class="form-control"
-              placeholder="Type CSULB ID or name…"
+              placeholder="CSULB ID or name…"
             />
           </div>
+
+          <!-- Student dropdown -->
           <div class="form-group mr-2">
             <select name="student_id" class="form-control">
               <option value="">— Select Student —</option>
@@ -34,9 +36,36 @@
               {% endfor %}
             </select>
           </div>
-          <button type="submit" class="btn btn-primary">
-            {% if student %}Refresh{% else %}View Case Notes{% endif %}
-          </button>
+
+          <!-- Date range filters -->
+          <div class="form-group mr-2">
+            <label for="start_date" class="sr-only">From</label>
+            <input
+              type="date"
+              name="start_date"
+              id="start_date"
+              value="{{ start_date }}"
+              class="form-control"
+              placeholder="From"
+            />
+          </div>
+          <div class="form-group mr-2">
+            <label for="end_date" class="sr-only">To</label>
+            <input
+              type="date"
+              name="end_date"
+              id="end_date"
+              value="{{ end_date }}"
+              class="form-control"
+              placeholder="To"
+            />
+          </div>
+
+          <!-- Submit + Clear -->
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href=window.location.pathname">
+                Clear
+            </button>
         </form>
       </div>
     </div>
@@ -45,7 +74,7 @@
       <div class="card">
         <div class="card-header">
           <h3>
-            Counseling Notes for: {{ student.first_name }} {{ student.last_name }}
+            Counseling Notes for {{ student.first_name }} {{ student.last_name }}
             ({{ student.csulb_id }})
           </h3>
           <p>
@@ -65,7 +94,7 @@
                 <tr>
                   <th>Date</th>
                   <th>Service Type</th>
-                  <th>Staff</th>
+                  <th>Counselor</th>
                   <th>Case Note</th>
                 </tr>
               </thead>
@@ -87,7 +116,7 @@
               </tbody>
             </table>
           {% else %}
-            <p class="p-3">No counseling notes found for this student.</p>
+            <p class="p-3">No counseling notes found for this student in the selected date range.</p>
           {% endif %}
         </div>
       </div>
