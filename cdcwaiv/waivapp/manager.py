@@ -4,6 +4,7 @@ from django.contrib import messages
 from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog, StudentDoc, WaivServiceInfo,CounselingLog, MonthlyClientListingLog
 import pandas as pd
 from django.db.models import Q
+from django.db import transaction
 
 def admin_home(request):
     return render(request, "manager_template/home_content.html")
@@ -201,7 +202,8 @@ def manage_staff(request):
 def view_counseling(request):
     # 1) Grab the raw search text
     search = request.GET.get('search', '').strip()
-
+    start_date  = request.GET.get('start_date', '').strip()
+    end_date    = request.GET.get('end_date', '').strip()
     # 2) Build a queryset of students to populate the dropdown
     students_qs = StudentPersonalInfo.objects.all()
     if search:
@@ -223,12 +225,22 @@ def view_counseling(request):
             .select_related('service_type', 'staff')
             .order_by('-date_checkin')
         )
+        # 4) Apply date‐range filtering if provided
+        if start_date:
+            logs = logs.filter(date_checkin__gte=start_date)
+        if end_date:
+            logs = logs.filter(date_checkin__lte=end_date)
+
+        logs = logs.select_related('service_type', 'staff') \
+                   .order_by('-date_checkin')
 
     return render(request, "manager_template/view_counseling_template.html", {
         'students':    students_qs,
         'search':      search,
         'student':     student,
         'logs':        logs,
+        'start_date':  start_date,
+        'end_date':    end_date,
     })
 
 def manage_student(request):
@@ -251,22 +263,140 @@ def manage_student(request):
                     'search':   search,
                   })
 
+def edit_staff(request, staff_id):
+    staff=WaivUser.objects.get(id=staff_id)
+    return render(request, "manager_template/edit_staff_template.html", {"staff":staff})
+
+def edit_staff_save(request):
+    if request.method!="POST":
+        return HttpResponse("<h2>Method Not Allowed</h2>")
+    else:
+        staff_id = request.POST.get("staff_id")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        email = request.POST.get("email")
+        username = request.POST.get("username")
+        position = request.POST.get("position")
+        try:
+            user=WaivUser.objects.get(id=staff_id)
+            user.first_name=first_name
+            user.last_name=last_name
+            user.email = email
+            user.username=username
+            user.position = position
+            user.save()
+            messages.success(request, "Successfully Edit staff")
+            return HttpResponseRedirect("/edit_staff/"+staff_id)
+        except Exception as e:
+            messages.error(request, f"Failed to edit staff: {e}")
+            return HttpResponseRedirect("/edit_staff/"+staff_id)
+        
+
+# List your doc types once so you can loop over them in both views
+DOC_TYPES = [
+    "waivreferral",
+    "dr260",
+    "dr215",
+    "dr222",
+    "casenote",
+]
+
 def edit_student(request, csulb_id):
-    # Lookup the student (404 if not found)
+    """
+    GET: fetch the student and related info, render the form.
+    """
     student = get_object_or_404(StudentPersonalInfo, csulb_id=csulb_id)
-    # Pull in the academic log if it exists
-    academic = getattr(student, 'academic_log', None)
+    case_managers = WaivUser.objects.filter(position="case_manager")
+    counselors    = WaivUser.objects.filter(position="counselor")
+    case_statuses = CaseStatusInfo.objects.all()
 
-    if request.method == 'POST':
-        # TODO: process form fields from request.POST, save changes…
-        # e.g. student.first_name = request.POST['first_name']
-        # student.save(), academic.save(), etc.
-        return redirect('manage_student')
+    # One-to-one academic log (might not exist yet)
+    try:
+        academic_log = student.academic_log
+    except StudentAcademicLog.DoesNotExist:
+        academic_log = None
 
-    # On GET, just render the edit form
-    return render(request,
-                  'manager_template/edit_student_template.html',
-                  {
-                    'student':  student,
-                    'academic': academic,
-                  })
+     # map existing docs by name
+    existing_docs = { d.doc_name: d for d in StudentDoc.objects.filter(csulb_id=student) }
+
+    # build a list of {"type": ..., "doc": model instance or None}
+    doc_items = []
+    for dt in DOC_TYPES:
+        doc_items.append({
+            "type": dt,
+            "doc": existing_docs.get(dt)  # None if not present
+        })
+    academic_levels = ["Freshman", "Sophomore", "Junior", "Senior", "Master", "Graduated"]
+    return render(request, "manager_template/edit_student_template.html", {
+        "student":       student,
+        "academic_log":  academic_log,
+        "case_managers": case_managers,
+        "counselors":    counselors,
+        "case_statuses": case_statuses,
+        "existing_docs": existing_docs,
+        "DOC_TYPES":     DOC_TYPES,
+        "DOC_ITEMS":      doc_items, 
+        "academic_levels": academic_levels,
+    })
+
+
+def edit_student_save(request, csulb_id):
+    """
+    POST: validate & save all fields, then redirect back to edit_student.
+    """
+    if request.method != "POST":
+        return redirect("edit_student", csulb_id=csulb_id)
+
+    student = get_object_or_404(StudentPersonalInfo, csulb_id=csulb_id)
+
+    with transaction.atomic():
+        # --- 1) Update StudentPersonalInfo fields ---
+        student.participant_id     = request.POST.get("participant_id", "")
+        student.first_name         = request.POST.get("first_name", "")
+        student.last_name          = request.POST.get("last_name", "")
+        student.birthdate          = request.POST.get("dob")  or None
+        student.email              = request.POST.get("email", "")
+        student.phone              = request.POST.get("phone", "")
+        student.city               = request.POST.get("city", "")
+        student.enrollment_date    = request.POST.get("enroll_date") or None
+        student.intake_status      = bool(int(request.POST.get("intake_status", 0)))
+        student.employ_goal        = request.POST.get("employ_goal", "")
+        student.disability_type    = request.POST.get("disability_type") or None
+        student.disability_detail  = request.POST.get("disability_detail", "")
+        student.case_manager_id    = request.POST.get("case_manager") or None
+        student.dedicated_staff_id = request.POST.get("dedicated_staff") or None
+        student.case_status_code_id= request.POST.get("case_status") or None
+        student.save()
+
+        # --- 2) Update or create AcademicLog ---
+        al, _ = StudentAcademicLog.objects.get_or_create(csulb_id=student)
+        al.academic_plan  = request.POST.get("academic_plan", "")
+        al.academic_level = request.POST.get("academic_level", "")
+        al.gpa            = request.POST.get("gpa") or None
+        al.save()
+
+        # --- 3) Handle each StudentDoc type ---
+        for doc_type in DOC_TYPES:
+            checked = request.POST.get(f"checkbox_{doc_type}") == "on"
+            rec_date = request.POST.get(f"received_{doc_type}") or None
+            exp_date = request.POST.get(f"expiry_{doc_type}") or None
+
+            if checked:
+                # create or update
+                StudentDoc.objects.update_or_create(
+                    csulb_id=student,
+                    doc_name=doc_type,
+                    defaults={
+                        "received_date": rec_date,
+                        "expiry_date":   exp_date,
+                    }
+                )
+            else:
+                # remove if it exists
+                StudentDoc.objects.filter(
+                    csulb_id=student,
+                    doc_name=doc_type
+                ).delete()
+
+    messages.success(request, "Student record updated successfully.")
+    return redirect("edit_student", csulb_id=student.csulb_id)
