@@ -4,15 +4,6 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
-class DorCounselor(models.Model):
-    dor_counselor_id = models.AutoField(primary_key=True)
-    dor_counselor_name = models.CharField(max_length=100)
-    dor_counselor_email = models.EmailField()
-
-    def __str__(self):
-        return f"{self.dor_counselor_name}"
-
 class CaseStatusInfo(models.Model):
     case_status_code = models.CharField(max_length=10, primary_key=True)
     case_description = models.CharField(max_length=255)
@@ -23,9 +14,10 @@ class CaseStatusInfo(models.Model):
 class MonthlyClientListingLog(models.Model):
     participant_id = models.CharField(max_length=20, unique=True, primary_key=True, db_column="participant_id")
     case_status_code = models.ForeignKey(CaseStatusInfo, on_delete=models.SET_NULL, null=True)
-    dor_counselor = models.ForeignKey(DorCounselor, on_delete=models.SET_NULL, null=True)
-    fund_begin_date = models.DateField()
+    dor_counselor = models.CharField(max_length=100)
+    fund_begin_date = models.DateField(null=True, blank=True)
     fund_end_date = models.DateField(null=True, blank=True)
+    closure_date = models.DateField(null=True, blank=True)
     district = models.CharField(max_length=100)
     updated_date = models.DateField(auto_now_add=True)
 
@@ -103,38 +95,43 @@ class CounselingLog(models.Model):
     case_note = models.TextField()
     updated_date = models.DateTimeField(auto_now_add=True)
 
-# class DocumentType(models.Model):
-#     code        = models.CharField(
-#         max_length=20,
-#         primary_key=True,
-#         choices=[
-#             ("IPE",                "IPE"),
-#             ("WAIV_REFERRAL_FORM", "WAIV Referral Form"),
-#             ("DR260",              "DR260"),
-#             ("DR222",              "DR222"),
-#             ("CASE_NOTE_AUTH",     "Case Note Authorization"),
-#         ]
-#     )
-#     description = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return self.get_code_display()
-
-
 class StudentDoc(models.Model):
-    csulb_id = models.OneToOneField(StudentPersonalInfo, on_delete=models.CASCADE, primary_key=True, related_name='doc', db_column="csulb_id")
-    received_date = models.DateField()
-    # file          = models.FileField(upload_to="student_docs/", null=True, blank=True)
-    expiry_date = models.DateField()
-    doc_name     = models.CharField(max_length=100, null=True, blank=True)
-    # Maybe in Version 2.0, we can allow add file directly
+    DOC_TYPE_CHOICES = [
+        ('waivreferral', 'WAIV Referral Form'),
+        ('dr260',         'DR 260 – Consent To Release'),
+        ('dr215',         'DR 215 – Individualized Plan Employment (IPE)'),
+        ('dr222',         'DR 222 – VR Services Application'),
+        ('casenote',      'Case Note Authorization'),
+    ]
+    csulb_id       = models.ForeignKey(
+                        StudentPersonalInfo,
+                        on_delete=models.CASCADE,
+                        null=False,
+                        blank=False,
+                        db_column="csulb_id"
+                    )
+    doc_name      = models.CharField(
+                        max_length=20,
+                        choices=DOC_TYPE_CHOICES
+                    )
+    received_date = models.DateField(null=True, blank=True)
+    expiry_date   = models.DateField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('csulb_id', 'doc_name')
+        ordering = ['csulb_id', 'doc_name']
 
     def __str__(self):
-        return f"{self.csulb_id} {self.doc_name}"
+        return f"{self.csulb_id}"
 
 class StudentAcademicLog(models.Model):
     academic_log_id = models.AutoField(primary_key=True)
-    csulb_id = models.ForeignKey(StudentPersonalInfo, on_delete=models.CASCADE, null=False, blank=False, db_column="csulb_id")
+    csulb_id = models.OneToOneField(
+        StudentPersonalInfo,
+        on_delete=models.CASCADE,
+        db_column="csulb_id",
+        related_name="academic_log"
+    )
     academic_plan   = models.CharField(max_length=100, null=True, blank=True)
     academic_level  = models.CharField(max_length=50,  null=True, blank=True)
     gpa             = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)

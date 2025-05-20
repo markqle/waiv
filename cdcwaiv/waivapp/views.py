@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from waivapp.EmailBackEnd import EmailBackEnd
 from rest_framework import generics
-from .models import StudentPersonalInfo, WaivUser
+from .models import StudentPersonalInfo, WaivUser, MonthlyClientListingLog, CaseStatusInfo
 
 def showDemoPage(request):
     return render(request, "demo.html")
@@ -33,4 +33,3 @@ def GetUserDetails(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect("/")
-

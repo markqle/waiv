@@ -31,5 +31,19 @@ urlpatterns = [
     path('add_staff', manager.add_staff),
     path('add_staff_save', manager.add_staff_save),
     path('add_student', manager.add_student),
-    path('add_student_save', manager.add_student_save)
+    path('add_student_save', manager.add_student_save),
+    path('add_counseling', manager.add_counseling),
+    path('add_counseling_save', manager.add_counseling_save),
+    path('import_monthly_client_listing/',manager.import_monthly_client_listing, name='import_monthly_client_listing'),
+    path('monthly_client_listing/', manager.monthly_client_listing, name='monthly_client_listing'),
+    path('manage_staff', manager.manage_staff),
+     # Manage students list
+    path('manage_student/', manager.manage_student, name='manage_student'),
+
+    # ** EDIT STUDENT **
+    path(
+      'student/<str:csulb_id>/edit/',
+      manager.edit_student,
+      name='edit_student'
+    ),
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
