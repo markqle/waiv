@@ -46,4 +46,5 @@ urlpatterns = [
       manager.edit_student,
       name='edit_student'
     ),
+    path('view_counseling', manager.view_counseling),
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

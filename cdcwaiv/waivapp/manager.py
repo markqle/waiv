@@ -150,9 +150,8 @@ def import_monthly_client_listing(request):
             case_status = None
             if status_code:
                 case_status = CaseStatusInfo.objects.filter(
-                    case_status_code=status_code
+                    case_description=status_code
                 ).first()
-
             # safe date parser
             def parse_date(col):
                 val = row.get(col)
@@ -199,11 +198,38 @@ def manage_staff(request):
     return render(request, 'manager_template/manage_staff_template.html', 
                   {"staffs": staffs})
 
-# def manage_student(request):
-#     students = StudentPersonalInfo.objects.all()
-#     student_academic_records = StudentAcademicLog.objects.all()
-#     return render(request,'manager_template/manage_student_template.html', 
-#                   {'students': students}, {student_academic_records: student_academic_records})
+def view_counseling(request):
+    # 1) Grab the raw search text
+    search = request.GET.get('search', '').strip()
+
+    # 2) Build a queryset of students to populate the dropdown
+    students_qs = StudentPersonalInfo.objects.all()
+    if search:
+        students_qs = students_qs.filter(
+            Q(csulb_id__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search)
+        )
+
+    # 3) If the user has selected a student, fetch their logs
+    selected_csulb = request.GET.get('student_id')
+    student = None
+    logs = None
+    if selected_csulb:
+        student = get_object_or_404(StudentPersonalInfo, csulb_id=selected_csulb)
+        logs = (
+            CounselingLog.objects
+            .filter(csulb_id=student)
+            .select_related('service_type', 'staff')
+            .order_by('-date_checkin')
+        )
+
+    return render(request, "manager_template/view_counseling_template.html", {
+        'students':    students_qs,
+        'search':      search,
+        'student':     student,
+        'logs':        logs,
+    })
 
 def manage_student(request):
     search = request.GET.get('table_search', '').strip()
