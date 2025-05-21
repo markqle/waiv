@@ -2,367 +2,63 @@
 {% block page_title %}Add Student{% endblock %}
 
 {% block main_content %}
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+  <style>
+    /* === TWO-COLUMN LAYOUT === */
+    /* only on this page, split the card-body into 2 columns */
+    .card.card-primary .card-body {
+      -webkit-columns: 2;
+      -moz-columns: 2;
+      columns: 2;
+      column-gap: 2rem;
+    }
+    /* avoid splitting a form-group across columns */
+    .card.card-primary .form-group {
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      page-break-inside: avoid;
+    }
 
-        {# show messages #}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}" role="alert">
-            {{ message }}
-          </div>
-        {% endfor %}
+    /* === CHECKBOX ALIGNMENT === */
+    /* make each form-group a relative container */
+    .card.card-primary .card-body .form-group {
+      position: relative;
+      padding-left: 1.5em; /* room for the box */
+    }
+    /* absolutely position every checkbox at the left edge */
+    .card.card-primary .card-body .form-group input[type="checkbox"] {
+      position: absolute;
+      top: 0.5em;  /* tweak to align vertically with text */
+      left: 0;
+      margin: 0;
+    }
+    /* ensure labels sit to the right of that box */
+    .card.card-primary .card-body .form-group label {
+      display: block;
+      margin: 0;
+    }
+  </style>
 
-        <div class="card card-primary">
-          <div class="card-header">
-            <h3 class="card-title">Add Student</h3>
-          </div>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
 
-          <form role="form" action="add_student_save" method="post">
-            {% csrf_token %}
-            <div class="card-body">
-              <div class="row">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
 
-                <!-- LEFT COLUMN -->
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="id_csulb_id">CSULB ID</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_csulb_id"
-                           name="csulb_id"
-                           placeholder="Student ID">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_participant_id">Participant ID</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_participant_id"
-                           name="participant_id"
-                           placeholder="DOR Participant ID">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_last_name">Last Name</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_last_name"
-                           name="last_name"
-                           placeholder="Last Name">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_first_name">First Name</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_first_name"
-                           name="first_name"
-                           placeholder="First Name">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_dob">Date of Birth</label>
-                    <input type="date"
-                           class="form-control"
-                           id="id_dob"
-                           name="dob">
-                  </div>
-                 
-                  <div class="form-group">
-                    <label for="id_employ_goal">Employment Goal</label>
-                    <textarea class="form-control"
-                              id="id_employ_goal"
-                              name="employ_goal"
-                              rows="1"
-                              placeholder="E.g: Registered Nurse, Doctor, Counselor…"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_academic_plan">Academic Plan</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_academic_plan"
-                           name="academic_plan"
-                           placeholder="E.g:BA-Economics">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_academic_level">Academic Level</label>
-                    <select class="form-control"
-                            id="id_academic_level"
-                            name="academic_level">
-                      <option value="Freshman">Freshman</option>
-                      <option value="Sophomore">Sophomore</option>
-                      <option value="Junior">Junior</option>
-                      <option value="Senior">Senior</option>
-                      <option value="Master">Graduate Student</option>
-                      <option value="Graduated">Graduated</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="gpa">GPA</label>
-                    <input type="number"
-                          step="0.01"
-                          min="0"
-                          max="4"
-                          class="form-control"
-                          id="gpa"
-                          name="gpa"
-                          placeholder="Enter Student GPA (decimal format)">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_email">Email address</label>
-                    <input type="email"
-                           class="form-control"
-                           id="id_email"
-                           name="email"
-                           placeholder="Enter email">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_phone">Phone</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_phone"
-                           name="phone"
-                           placeholder="1234567890">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_city">City</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_city"
-                           name="city"
-                           placeholder="City">
-                  </div>
-                </div>
-
-                <!-- RIGHT COLUMN -->
-                <div class="col-md-6">
-
-
-                  <div class="form-group">
-                    <label for="id_enroll_date">Enrollment Date</label>
-                    <input type="date"
-                           class="form-control"
-                           id="id_enroll_date"
-                           name="enroll_date">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_intake_status">Intake Status</label>
-                    <select class="form-control"
-                            id="id_intake_status"
-                            name="intake_status">
-                      <option value="1">Yes</option>
-                      <option value="0">No</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_disability_type">Disability Type</label>
-                    <select class="form-control"
-                            id="id_disability_type"
-                            name="disability_type">
-                      <option value="">— Select —</option>
-                      <option value="mental">Mental</option>
-                      <option value="physical">Physical</option>
-                      <option value="neurological">Neurological</option>
-                      <option value="combination">Combination</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_disability_detail">Disability Detail</label>
-                    <input type="text"
-                           class="form-control"
-                           id="id_disability_detail"
-                           name="disability_detail"
-                           placeholder="E.g: ADHD, Autism">
-                  </div>
-                  <div class="form-group">
-                    <label for="id_case_manager">Case Manager</label>
-                    <select class="form-control"
-                            id="id_case_manager"
-                            name="case_manager">
-                      <option value="">— Select Case Manager —</option>
-                      {% for cm in case_managers %}
-                        <option value="{{ cm.id }}">{{ cm.first_name }} {{ cm.last_name }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_dedicated_staff">Dedicated Counselor</label>
-                    <select class="form-control"
-                            id="id_dedicated_staff"
-                            name="dedicated_staff">
-                      <option value="">— Select Counselor —</option>
-                      {% for c in counselors %}
-                        <option value="{{ c.id }}">{{ c.first_name }} {{ c.last_name }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="id_case_status_info">Case Status</label>
-                    <select class="form-control"
-                            id="id_case_status_info"
-                            name="case_status">
-                      <option value="">— Select Case Status —</option>
-                      {% for case in case_status %}
-                        <option value="{{ case.case_status_code }}">{{ case.case_status_code }} - {{ case.case_description }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  
-                   <div class="form-group">
-                      <label>Student Documents</label>
-
-                      <!-- WAIV Referral Form row -->
-                      <div class="row mb-2">
-                        <div class="col-md-4">
-                          <div class="icheck-primary">
-                            <input type="checkbox" id="checkbox_waivreferral" name="checkbox_waivreferral">
-                            <label for="checkbox_waivreferral">WAIV Referral Form</label>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label>Received Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="received_waivreferral"
-                            name="received_waivreferral"
-                            placeholder="Received Date">
-                        </div>
-                        <div class="col-md-4">
-                          <label>Expiry Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="expiry_waivreferral"
-                            name="expiry_waivreferral"
-                            placeholder="Expiry Date">
-                        </div>
-                      </div>
-
-                      <!-- DR 260 row -->
-                      <div class="row mb-2">
-                        <div class="col-md-4">
-                          <div class="icheck-primary">
-                            <input type="checkbox" id="checkbox_dr260" name="checkbox_dr260">
-                            <label for="checkbox_dr260">DR 260 – Consent To Release</label>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label>Received Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="received_dr260"
-                            name="received_dr260"
-                            placeholder="Received Date">
-                        </div>
-                        <div class="col-md-4">
-                          <label>Expiry Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="expiry_dr260"
-                            name="expiry_dr260"
-                            placeholder="Expiry Date">
-                        </div>
-                      </div>
-                      <!-- DR 215 - IPE row -->
-                      <div class="row mb-2">
-                        <div class="col-md-4">
-                          <div class="icheck-primary">
-                            <input type="checkbox" id="checkbox_dr215" name="checkbox_dr215">
-                            <label for="checkbox_dr215">DR 215 – Individualized Plan Employment (IPE)</label>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label>Received Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="received_dr215"
-                            name="received_dr215"
-                            placeholder="Received Date">
-                        </div>
-                        <div class="col-md-4">
-                          <label>Expiry Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="expiry_dr215"
-                            name="expiry_dr215"
-                            placeholder="Expiry Date">
-                        </div>
-                      </div>
-                      <!-- DR 222 - VR Services Application-->
-                      <div class="row mb-2">
-                        <div class="col-md-4">
-                          <div class="icheck-primary">
-                            <input type="checkbox" id="checkbox_dr222" name="checkbox_dr222">
-                            <label for="checkbox_dr222">DR 222 – VR Services Application</label>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label>Received Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="received_dr222"
-                            name="received_dr222"
-                            placeholder="Received Date">
-                        </div>
-                        <div class="col-md-4">
-                          <label>Expiry Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="expiry_dr222"
-                            name="expiry_dr222"
-                            placeholder="Expiry Date">
-                        </div>
-                      </div>
-                      <!-- Case Note Authorization-->
-                      <div class="row mb-2">
-                        <div class="col-md-4">
-                          <div class="icheck-primary">
-                            <input type="checkbox" id="checkbox_casenote" name="checkbox_casenote">
-                            <label for="checkbox_casenote">Case Note Authorization</label>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <label>Received Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="received_casenote"
-                            name="received_casenote"
-                            placeholder="Received Date">
-                        </div>
-                        <div class="col-md-4">
-                          <label>Expiry Date</label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            id="expiry_casenote"
-                            name="expiry_casenote"
-                            placeholder="Expiry Date">
-                        </div>
-                      </div>
-                    </div>
-
-                </div>
-
-              </div><!-- /.row -->
-            </div><!-- /.card-body -->
-
-            <div class="card-footer">
-              <button type="submit"
-                      class="btn btn-primary btn-block">
-                Add Student
-              </button>
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Add Student</h3>
             </div>
-          </form><!-- /form -->
 
-        </div><!-- /.card -->
-      </div><!-- /.col-md-12 -->
-    </div><!-- /.row -->
-  </div><!-- /.container-fluid -->
-</section>
+            {% url 'add_student_save' as action_path %}
+            {% include 'manager_template/form_template.html' with form=form action_path=action_path button_text="Add Student" %}
+
+          </div><!-- /.card -->
+
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
 {% endblock main_content %}

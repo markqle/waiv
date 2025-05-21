@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from waivapp.forms import AddStudentForm
 from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog, StudentDoc, WaivServiceInfo,CounselingLog, MonthlyClientListingLog
 import pandas as pd
 import string
 import datetime
 from io import BytesIO
+from django.urls import reverse
 from xhtml2pdf import pisa
 from django.template.loader import render_to_string
 from django.db.models import Q
@@ -37,14 +39,26 @@ def add_staff_save(request):
             return HttpResponseRedirect("/add_staff")
         
 def add_student(request):
-    # Fetch only case managers and counselors
-    case_managers = WaivUser.objects.filter(position="case_manager")
-    counselors   = WaivUser.objects.filter(position="counselor")
-    case_status = CaseStatusInfo.objects.all()
+    form = AddStudentForm()
+    action_path = reverse('add_student_save')
+
+    left_fields = [
+        "csulb_id", "participant_id", "last_name", "first_name",
+        "birthdate", "employ_goal", "academic_plan",
+        "academic_level", "gpa", "email"
+    ]
+    right_fields = [
+        "phone", "city", "enrollment_date", "intake_status",
+        "disability_type", "disability_detail", "case_manager",
+        "dedicated_counselor", "case_status"
+    ]
+
     return render(request, "manager_template/add_student_template.html", {
-        "case_managers": case_managers,
-        "counselors":    counselors,
-        "case_status": case_status,
+        "form": form,
+        "action_path": action_path,
+        "button_text": "Add Student",
+        "left_fields": left_fields,
+        "right_fields": right_fields,
     })
 
 def add_student_save(request):
@@ -56,11 +70,11 @@ def add_student_save(request):
         first_name=request.POST.get('first_name')
         last_name=request.POST.get('last_name')
         email=request.POST.get('email')
-        dob=request.POST.get('dob')
+        birthdate      = request.POST.get('birthdate')
         phone=request.POST.get('phone')
         employ_goal = request.POST.get('employ_goal')
         city=request.POST.get('city')
-        enroll_date = request.POST.get('enroll_date')
+        enrollment_date = request.POST.get('enrollment_date')
         intake_status = request.POST.get('intake_status') == "1"
         disability_type = request.POST.get('disability_type')
         disability_detail = request.POST.get('disability_detail')
@@ -74,7 +88,7 @@ def add_student_save(request):
             status = CaseStatusInfo.objects.get(pk=cs_code)
         DOC_CODES = ['waivreferral', 'dr260', 'dr215', 'dr222', 'casenote']
         try:
-            student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=dob, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enroll_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
+            student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=birthdate, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enrollment_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
             StudentLog.objects.create(csulb_id=student, case_status_code=status)
             StudentAcademicLog.objects.create(csulb_id_id=student.csulb_id,academic_plan=academic_plan, academic_level=academic_level, gpa=gpa)
             for code in DOC_CODES:
