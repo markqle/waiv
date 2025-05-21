@@ -1,0 +1,74 @@
+{# templates/manager_template/monthly_report_pdf.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: sans-serif; font-size: 12px; }
+    h2, h3 { margin-bottom: .25em; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
+    th, td { border: 1px solid #333; padding: 4px; text-align: left; }
+    .section { margin-bottom: 1.5em; }
+    .label { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>Monthly Report for {{ student.first_name }} {{ student.last_name }} || California State University Long Beach</h2>
+
+  <div class="section">
+    <h3>Student Information</h3>
+    <p><span class="label">CSULB ID:</span> {{ student.csulb_id }}</p>
+    <p><span class="label">Date of Birth:</span> {{ student.birthdate }}</p>
+    <p><span class="label">Employment Goal:</span> {{ student.employ_goal }}</p>
+    <p><span class="label">Case Manager:</span> {{ case_manager.get_full_name }}</p>
+    <p><span class="label">DOR Counselor:</span> {{ dor_counselor }}</p>
+  </div>
+
+  <div class="section">
+    <h3>Counseling Sessions</h3>
+    {% if counseling_logs %}
+    <table>
+      <thead>
+        <tr>
+          <th>Service Type</th>
+          <th>Staff</th>
+          <th>Date</th>
+          <th>Case Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for note in counseling_logs %}
+        <tr>
+          <td>{{ note.service_type.service_description }}</td>
+          <td>{{ note.staff.get_full_name }}</td>
+          <td>{{ note.date_checkin }}</td>
+          <td>{{ note.case_note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p>No counseling sessions found for this student.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <h3>Describe Consumer Progress toward IPE</h3>
+    <p>{{ progress|default:"—" }}</p>
+  </div>
+
+  <div class="section">
+    <h3>Plan for Next Step</h3>
+    <p>{{ plan|default:"—" }}</p>
+  </div>
+
+  <div class="section">
+    <h3>Staff Signature</h3>
+    <p><span class="label">Signature:</span> {{ staff_sign }}</p>
+    <p><span class="label">Title:</span> {{ staff_title }}</p>
+    <p><span class="label">Date:</span> {{ date }}</p>
+  </div>
+
+</body>
+</html>

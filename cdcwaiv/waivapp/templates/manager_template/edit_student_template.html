@@ -290,7 +290,7 @@
                       {% for cs in case_statuses %}
                         <option
                           value="{{ cs.case_status_code }}"
-                          {% if student.case_status_code_id == cs.case_status_code %}selected{% endif %}
+                          {% if current_status_code == cs.case_status_code %}selected{% endif %}
                         >
                           {{ cs.case_status_code }} – {{ cs.case_description }}
                         </option>

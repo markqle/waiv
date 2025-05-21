@@ -1,0 +1,66 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}Create Monthly Report{% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <form method="get" class="form-inline mb-4">
+      <div class="form-group mr-2">
+        <select name="dor_counselor" class="form-control">
+          <option value="">— Select Counselor —</option>
+          {% for c in counselors %}
+            <option
+              value="{{ c }}"
+              {% if c == selected_counselor %}selected{% endif %}
+            >{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group mr-2">
+        <select name="updated_date" class="form-control">
+          <option value="">— Select Date —</option>
+          {% for d in dates %}
+            <option
+                value="{{ d|date:'Y-m-d' }}"
+                {% if d|date:'Y-m-d' == selected_date %}selected{% endif %}
+            >
+                {{ d|date:"F j, Y" }}
+            </option>
+            {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    {% if rows %}
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Participant ID</th>
+            <th>Student Name</th>
+            <th>CSULB ID</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.participant_id }}</td>
+            <td>{{ r.name }}</td>
+            <td>{{ r.csulb_id }}</td>
+            <td>
+              <a
+                class="btn btn-sm btn-info"
+                href="{% url 'monthly_report_detail' %}?participant_id={{ r.participant_id }}&dor_counselor={{ selected_counselor|urlencode }}&updated_date={{ selected_date|urlencode }}"
+                >
+                Detail
+            </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
