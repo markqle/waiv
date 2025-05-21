@@ -25,7 +25,8 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            {% url 'admin_home' as admin_home %}
+            <a href="{{ admin_home }}" class="nav-link {% if request.path == admin_home %} active {% endif %}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                     Dashboard
@@ -34,7 +35,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/add_staff" class="nav-link">
+            {% url 'add_staff' as add_staff %}
+            <a href="{{ add_staff }}" class="nav-link {% if request.path == add_staff %} active {% endif %}">
               <i class="nav-icon fas fa-user-plus"></i>
               <p>
                 Add Staff
@@ -43,7 +45,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/manage_staff" class="nav-link">
+            {% url 'manage_staff' as manage_staff %}
+            <a href="{{ manage_staff }}" class="nav-link {% if request.path == manage_staff %} active {% endif %}">
               <i class="nav-icon fas  fa-edit"></i>
               <p>
                 Manage Staff
@@ -52,7 +55,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/add_student" class="nav-link">
+            {% url 'add_student' as add_student %}
+            <a href="{{ add_student }}" class="nav-link {% if request.path == add_student %} active {% endif %}">
               <i class="nav-icon fas fa-graduation-cap"></i>
               <p>
                 Add Student
@@ -61,7 +65,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/manage_student" class="nav-link">
+            {% url 'manage_student' as manage_student %}
+            <a href="{{ manage_student }}" class="nav-link {% if request.path == manage_student %} active {% endif %}">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Manage Student
@@ -70,7 +75,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/add_counseling" class="nav-link">
+            {% url 'add_counseling' as add_counseling %}
+            <a href="{{ add_counseling }}" class="nav-link {% if request.path == add_counseling %} active {% endif %}">
               <i class="nav-icon fas fa-address-book"></i>
               <p>
                 Add Counseling Session
@@ -79,7 +85,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/view_counseling" class="nav-link">
+            {% url 'view_counseling' as view_counseling %}
+            <a href="{{ view_counseling }}" class="nav-link {% if request.path == view_counseling %} active {% endif %}">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 View Counseling Session
@@ -88,7 +95,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/import_monthly_client_listing" class="nav-link">
+            {% url 'import_monthly_client_listing' as import_monthly_client_listing %}
+            <a href="{{ import_monthly_client_listing }}" class="nav-link {% if request.path == import_monthly_client_listing %} active {% endif %}">
               <i class="nav-icon fas fa-calendar-alt"></i>
               <p>
                 Add Monthly DOR Listing
@@ -97,7 +105,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/monthly_client_listing" class="nav-link">
+            {% url 'monthly_client_listing' as monthly_client_listing %}
+            <a href="{{ monthly_client_listing }}" class="nav-link  {% if request.path == monthly_client_listing %} active {% endif %}">
               <i class="nav-icon fas fa-search"></i>
               <p>
                 View Monthly DOR Listing
@@ -106,7 +115,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/add_staff" class="nav-link">
+            {% url 'create_monthly_report' as create_monthly_report %}
+            <a href="{{ create_monthly_report }}" class="nav-link {% if request.path == create_monthly_report %} active {% endif %}">
               <i class="nav-icon fas fa-plus-square"></i>
               <p>
                 Create Monthly Report

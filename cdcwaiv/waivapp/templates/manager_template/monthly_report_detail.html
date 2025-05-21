@@ -1,0 +1,105 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}Monthly Report for {{ student.first_name }}{% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+
+    <form method="post">
+      {% csrf_token %}
+
+      <h4>Student Info</h4>
+      <div class="row mb-3">
+        <div class="col"><strong>CSULB ID:</strong> {{ student.csulb_id }}</div>
+        <div class="col"><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</div>
+        <div class="col"><strong>DOB:</strong> {{ student.birthdate }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col"><strong>Employment Goal:</strong> {{ student.employ_goal }}</div>
+        <div class="col"><strong>Case Manager:</strong> {{ case_manager.get_full_name }}</div>
+        <div class="col"><strong>DOR Counselor:</strong> {{ dor_counselor }}</div>
+      </div>
+
+      <h4>Counseling Sessions</h4>
+      <table class="table table-sm table-bordered mb-4">
+        <thead>
+          <tr>
+            <th>Service Type</th><th>Staff</th><th>Date</th><th>Case Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for note in counseling_logs %}
+          <tr>
+            <td>{{ note.service_type.service_description }}</td>
+            <td>{{ note.staff.get_full_name }}</td>
+            <td>{{ note.date_checkin }}</td>
+            <td>{{ note.case_note }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="form-group">
+        <label for="id_progress">Describe Consumer Progress toward IPE</label>
+        <textarea
+          class="form-control"
+          id="id_progress"
+          name="progress"
+          rows="3"
+        >{{ form_data.progress }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="id_plan">Plan for next step</label>
+        <textarea
+          class="form-control"
+          id="id_plan"
+          name="plan"
+          rows="3"
+        >{{ form_data.plan }}</textarea>
+      </div>
+
+      <div class="form-row mt-4">
+        <div class="form-group col-md-4">
+          <label for="id_staff_sign">Staff Signature</label>
+          <input
+            type="text"
+            class="form-control"
+            id="id_staff_sign"
+            name="staff_sign"
+            value="{{ form_data.staff_sign }}"
+          />
+        </div>
+        <div class="form-group col-md-4">
+          <label for="id_date">Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="id_date"
+            name="date"
+            value="{{ form_data.date }}"
+          />
+        </div>
+        <div class="form-group col-md-4">
+          <label for="id_staff_title">Title of Staff</label>
+          <input
+            type="text"
+            class="form-control"
+            id="id_staff_title"
+            name="staff_title"
+            value="{{ form_data.staff_title }}"
+          />
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        name="export"
+        value="pdf"
+        class="btn btn-success"
+      >
+        Export PDF
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

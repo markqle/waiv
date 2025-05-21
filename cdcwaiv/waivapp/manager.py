@@ -3,6 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog, StudentDoc, WaivServiceInfo,CounselingLog, MonthlyClientListingLog
 import pandas as pd
+import string
+import datetime
+from io import BytesIO
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
 from django.db.models import Q
 from django.db import transaction
 
@@ -126,41 +131,40 @@ def add_counseling_save(request):
             messages.error(request, f"Failed to Add new counseling note: {e}")
             return HttpResponseRedirect("/add_counseling")
 
-
 def import_monthly_client_listing(request):
     if request.method == 'POST':
         f = request.FILES['file']
-        # force strings so we can detect empty cells
         if f.name.lower().endswith('.csv'):
             df = pd.read_csv(f, dtype=str)
         else:
             df = pd.read_excel(f, dtype=str)
 
         for _, row in df.iterrows():
-            # safe extraction helper
             def get_str(col):
-                val = row.get(col)
-                return val.strip() if isinstance(val, str) else ''
+                v = row.get(col)
+                return v.strip() if isinstance(v, str) else ''
 
-            pid         = get_str('Participant_ID')
+            pid   = get_str('Participant_ID')
+            raw   = get_str('Staff_Name')
+            # normalize to “John Doe” rather than ALL CAPS or all lowercase
+            counselor = string.capwords(raw.lower())
             status_code = get_str('Case_Status')
-            counselor   = get_str('Staff_Name')
             district    = get_str('Dist')
 
-            # lookup foreign key
             case_status = None
             if status_code:
-                case_status = CaseStatusInfo.objects.filter(
-                    case_description=status_code
-                ).first()
-            # safe date parser
+                case_status = (
+                    CaseStatusInfo.objects
+                    .filter(case_description=status_code)
+                    .first()
+                )
+
             def parse_date(col):
-                val = row.get(col)
-                # if Pandas saw a date, it may already be a Timestamp
-                if pd.isna(val) or val == '':
+                v = row.get(col)
+                if pd.isna(v) or v == '':
                     return None
                 try:
-                    return pd.to_datetime(val).date()
+                    return pd.to_datetime(v).date()
                 except Exception:
                     return None
 
@@ -327,6 +331,13 @@ def edit_student(request, csulb_id):
             "doc": existing_docs.get(dt)  # None if not present
         })
     academic_levels = ["Freshman", "Sophomore", "Junior", "Senior", "Master", "Graduated"]
+    last_log = (
+        StudentLog.objects
+        .filter(csulb_id=student)
+        .order_by('-updated_date')
+        .first()
+    )
+    current_status_code = last_log.case_status_code.case_status_code if last_log else None
     return render(request, "manager_template/edit_student_template.html", {
         "student":       student,
         "academic_log":  academic_log,
@@ -337,6 +348,7 @@ def edit_student(request, csulb_id):
         "DOC_TYPES":     DOC_TYPES,
         "DOC_ITEMS":      doc_items, 
         "academic_levels": academic_levels,
+        "current_status_code": current_status_code,
     })
 
 
@@ -348,7 +360,16 @@ def edit_student_save(request, csulb_id):
         return redirect("edit_student", csulb_id=csulb_id)
 
     student = get_object_or_404(StudentPersonalInfo, csulb_id=csulb_id)
+    last_log = (
+        StudentLog.objects
+        .filter(csulb_id=student)
+        .order_by('-updated_date')
+        .first()
+    )
+    old_status = last_log.case_status_code.case_status_code if last_log else None
 
+    # 2) Get the new status from the form
+    new_status = request.POST.get("case_status") or None
     with transaction.atomic():
         # --- 1) Update StudentPersonalInfo fields ---
         student.participant_id     = request.POST.get("participant_id", "")
@@ -365,9 +386,11 @@ def edit_student_save(request, csulb_id):
         student.disability_detail  = request.POST.get("disability_detail", "")
         student.case_manager_id    = request.POST.get("case_manager") or None
         student.dedicated_staff_id = request.POST.get("dedicated_staff") or None
-        student.case_status_code_id= request.POST.get("case_status") or None
-        student.save()
-
+        if new_status and new_status != old_status:
+            StudentLog.objects.create(
+                csulb_id=student,
+                case_status_code_id=new_status
+            )
         # --- 2) Update or create AcademicLog ---
         al, _ = StudentAcademicLog.objects.get_or_create(csulb_id=student)
         al.academic_plan  = request.POST.get("academic_plan", "")
@@ -400,3 +423,131 @@ def edit_student_save(request, csulb_id):
 
     messages.success(request, "Student record updated successfully.")
     return redirect("edit_student", csulb_id=student.csulb_id)
+
+def create_monthly_report(request):
+    # dropdown choices
+    counselors = (
+        MonthlyClientListingLog.objects
+        .values_list('dor_counselor', flat=True)
+        .distinct()
+    )
+    dates = (
+        MonthlyClientListingLog.objects
+        .values_list('updated_date', flat=True)
+        .distinct()
+    )
+
+    selected_counselor = request.GET.get('dor_counselor')
+    selected_date_str  = request.GET.get('updated_date')
+    selected_date = None
+    if selected_date_str:
+        try:
+            # try to parse "May 20, 2025" or "2025-05-20"
+            selected_date = datetime.datetime.strptime(
+                selected_date_str, '%B %d, %Y'
+            ).date()
+        except ValueError:
+            try:
+                selected_date = datetime.datetime.strptime(
+                    selected_date_str, '%Y-%m-%d'
+                ).date()
+            except ValueError:
+                selected_date = None
+
+    rows = []
+    if selected_counselor and selected_date:
+        logs = MonthlyClientListingLog.objects.filter(
+            dor_counselor=selected_counselor,
+            updated_date=selected_date
+        )
+        for log in logs:
+            try:
+                student = StudentPersonalInfo.objects.get(
+                    participant_id=log.participant_id
+                )
+            except StudentPersonalInfo.DoesNotExist:
+                continue
+            rows.append({
+                'participant_id': log.participant_id,
+                'csulb_id':       student.csulb_id,
+                'name':           f"{student.first_name} {student.last_name}",
+            })
+
+    return render(request, 'manager_template/create_monthly_report.html', {
+        'counselors':         counselors,
+        'dates':              dates,
+        'selected_counselor': selected_counselor,
+        'selected_date':      selected_date,
+        'rows':               rows,
+    })
+
+
+def monthly_report_detail(request):
+    # pull in query params
+    pid       = request.GET.get('participant_id')
+    counselor = request.GET.get('dor_counselor')
+    up_date   = request.GET.get('updated_date')
+    if not pid or not counselor or not up_date:
+        # You could redirect back with an error message or render a 400
+        return redirect('create_monthly_report')
+    
+    student = get_object_or_404(
+        StudentPersonalInfo,
+        participant_id=pid
+    )
+    case_manager = student.case_manager  # WaivUser FK
+    counseling_logs = (
+        CounselingLog.objects
+        .filter(csulb_id=student)
+        .select_related('service_type', 'staff')
+        .order_by('date_checkin')
+    )
+
+    # initial form data
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    defaults = {
+        'progress':    '',
+        'plan':        '',
+        'staff_sign':  request.user.get_full_name(),
+        'staff_title': '',
+        'date':        today,
+    }
+
+    # if user clicked “Export PDF”…
+    if request.method == 'POST' and request.POST.get('export') == 'pdf':
+        # pull each field explicitly
+        progress    = request.POST.get('progress',    defaults['progress'])
+        plan        = request.POST.get('plan',        defaults['plan'])
+        staff_sign  = request.POST.get('staff_sign',  defaults['staff_sign'])
+        staff_title = request.POST.get('staff_title', defaults['staff_title'])
+        date_field  = request.POST.get('date',        defaults['date'])
+        html = render_to_string('manager_template/monthly_report_pdf.html', {
+            'student':         student,
+            'case_manager':    case_manager,
+            'dor_counselor':   counselor,
+            'counseling_logs': counseling_logs,
+            'progress':        progress,
+            'plan':            plan,
+            'staff_sign':      staff_sign,
+            'staff_title':     staff_title,
+            'date':            date_field,
+        })
+        result = BytesIO()
+        pisa_status = pisa.CreatePDF(html, dest=result)
+        if pisa_status.err:
+            return HttpResponse('PDF generation error', status=500)
+        response = HttpResponse(
+            result.getvalue(),
+            content_type='application/pdf'
+        )
+        fname = f"Monthly_Report_{student.csulb_id}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{fname}"'
+        return response
+
+    return render(request, 'manager_template/monthly_report_detail.html', {
+        'student':         student,
+        'case_manager':    case_manager,
+        'dor_counselor':   counselor,
+        'counseling_logs': counseling_logs,
+        **defaults,
+    })
