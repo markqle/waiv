@@ -1,0 +1,34 @@
+<form role="form"
+      action="{{ action_path }}"
+      method="post">
+  {% csrf_token %}
+
+  <div class="card-body">
+    {# Non‐field errors at the top #}
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+      <div class="form-group">
+        {# Field‐specific errors #}
+        {% for error in field.errors %}
+          <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+
+        {# Label & widget #}
+        {{ field.label_tag }}
+        {{ field }}
+
+        {# Optional help text #}
+        {% if field.help_text %}
+          <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div><!-- /.card-body -->
+
+  <div class="card-footer text-center">
+    <button type="submit" class="btn btn-primary btn-block">
+      {{ button_text }}
+    </button>
+  </div>
+</form>

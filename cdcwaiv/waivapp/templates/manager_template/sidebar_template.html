@@ -40,17 +40,17 @@
               <i class="nav-icon fas fa-user-plus"></i>
               <p>
                 Add Staff
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
           <li class="nav-item">
             {% url 'manage_staff' as manage_staff %}
-            <a href="{{ manage_staff }}" class="nav-link {% if request.path == manage_staff %} active {% endif %}">
+            {% url 'edit_staff' staff_id=id as edit_staff %}
+            <a href="{{ manage_staff }}" 
+              class="nav-link {% if request.resolver_match.url_name == 'manage_staff' or request.resolver_match.url_name == 'edit_staff' %} active {% endif %}">
               <i class="nav-icon fas  fa-edit"></i>
               <p>
                 Manage Staff
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -60,17 +60,17 @@
               <i class="nav-icon fas fa-graduation-cap"></i>
               <p>
                 Add Student
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
           <li class="nav-item">
             {% url 'manage_student' as manage_student %}
-            <a href="{{ manage_student }}" class="nav-link {% if request.path == manage_student %} active {% endif %}">
+            {% url 'edit_student' student_id=id as edit_student %}
+            <a href="{{ manage_student }}" 
+              class="nav-link  {% if request.resolver_match.url_name == 'manage_student' or request.resolver_match.url_name == 'edit_student' %} active {% endif %}">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Manage Student
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -80,7 +80,6 @@
               <i class="nav-icon fas fa-address-book"></i>
               <p>
                 Add Counseling Session
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -90,7 +89,6 @@
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 View Counseling Session
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -100,7 +98,6 @@
               <i class="nav-icon fas fa-calendar-alt"></i>
               <p>
                 Add Monthly DOR Listing
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -110,7 +107,6 @@
               <i class="nav-icon fas fa-search"></i>
               <p>
                 View Monthly DOR Listing
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
@@ -120,7 +116,6 @@
               <i class="nav-icon fas fa-plus-square"></i>
               <p>
                 Create Monthly Report
-                {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
               </p>
             </a>
           </li>
