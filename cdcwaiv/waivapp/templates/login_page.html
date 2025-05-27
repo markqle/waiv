@@ -29,7 +29,7 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to WAIV SMS</p>
 
-      <form action="/doLogin" method="post">
+      <form action="{% url 'do_login' %}" method="post">
             {% csrf_token %}
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Email" name="email">

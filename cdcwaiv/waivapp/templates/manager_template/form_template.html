@@ -1,6 +1,7 @@
 <form role="form"
       action="{{ action_path }}"
-      method="post">
+      method="post"
+      enctype="multipart/form-data">
   {% csrf_token %}
 
   <div class="card-body">

@@ -17,13 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
-from waivapp import views, manager
+from waivapp import views, manager, StaffViews
 from cdcwaiv import settings
 
 urlpatterns = [
+#   Manager URL path
     path('admin/', admin.site.urls),
     path('demo', views.showDemoPage),
-    path('', views.showLoginPage),
+    path('', views.showLoginPage, name="show_login"),
     path('get_user_details', views.GetUserDetails),
     path('logout_user', views.logout_user, name="logout"),
     path('doLogin', views.doLogin, name="do_login"),
@@ -45,4 +46,20 @@ urlpatterns = [
     path('view_counseling', manager.view_counseling, name="view_counseling"),
     path('create_monthly_report/', manager.create_monthly_report,name='create_monthly_report'),
     path('monthly_report_detail/',manager.monthly_report_detail,name='monthly_report_detail'),
+
+#   Staff URL path
+    # STAFF HOME
+    path('staff/home/',          StaffViews.staff_home,           name='staff_home'),
+
+    # COUNSELING
+    path('staff/add_counseling/',       StaffViews.add_counseling,      name='staff_add_counseling'),
+    path('staff/add_counseling_save/',  StaffViews.add_counseling_save, name='staff_add_counseling_save'),
+    path('staff/view_counseling/',      StaffViews.view_counseling,     name='staff_view_counseling'),
+
+    # STUDENTS
+    path('staff/manage_student/',          StaffViews.manage_student,      name='staff_manage_student'),
+    path('staff/edit_student/<str:csulb_id>/',       StaffViews.edit_student,      name='staff_edit_student'),
+    path('staff/edit_student/<str:csulb_id>/save/',  StaffViews.edit_student_save, name='staff_edit_student_save'),
+
+
 ]+static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
