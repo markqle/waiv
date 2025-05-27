@@ -15,16 +15,82 @@ from waivapp.models        import (
 )
 from django.db.models import Q
 from waivapp import manager
+from datetime import timedelta
+from django.utils import timezone
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from waivapp.forms         import AddStudentForm
 from django.db import transaction
-
+from django.db.models import Q, Count
+from django.db import transaction
+import json
 # ——————————————————————————————————————————————————————————————
 # HOME
 # ——————————————————————————————————————————————————————————————
 
 def staff_home(request):
-    return render(request, "staff_template/staff_home_template.html")
+    # define the 1-month lookback
+    today = timezone.now().date()
+    last_month = today - datetime.timedelta(days=30)
+
+    # build a list of each date in the last month
+    date_list = [
+        last_month + datetime.timedelta(days=i)
+        for i in range((today - last_month).days + 1)
+    ]
+    # formatted labels for the X axis
+    ts_labels = [d.strftime('%Y-%m-%d') for d in date_list]
+
+    # 1) Case‐status changes in the last month, grouped by description (bar)
+    cs_qs = (
+        StudentLog.objects
+        .filter(updated_date__date__gte=last_month)
+        .values('case_status_code__case_description')
+        .annotate(count=Count('pk'))
+    )
+    cs_labels = [item['case_status_code__case_description'] for item in cs_qs]
+    cs_values = [item['count'] for item in cs_qs]
+
+    # 2) Counseling sessions per day (time series)
+    counseling_ts = [
+        CounselingLog.objects.filter(date_checkin=d).count()
+        for d in date_list
+    ]
+
+    # 3) New intakes per day (time series)
+    intake_ts = [
+        StudentPersonalInfo.objects.filter(
+            intake_status=True,
+            enrollment_date=d
+        ).count()
+        for d in date_list
+    ]
+
+    # 4) Sessions per Staff in last month (bar)
+    staff_qs = (
+        CounselingLog.objects
+        .filter(date_checkin__gte=last_month)
+        .values('staff__first_name', 'staff__last_name')
+        .annotate(count=Count('pk'))
+    )
+    staff_labels = [
+        f"{item['staff__first_name']} {item['staff__last_name']}"
+        for item in staff_qs
+    ]
+    staff_values = [item['count'] for item in staff_qs]
+
+    return render(request, "staff_template/staff_home_template.html", {
+        # bar chart data
+        'cs_labels':        json.dumps(cs_labels),
+        'cs_values':        json.dumps(cs_values),
+        'staff_labels':     json.dumps(staff_labels),
+        'staff_values':     json.dumps(staff_values),
+
+        # time‐series line chart data
+        'ts_labels':        json.dumps(ts_labels),
+        'counseling_ts':    json.dumps(counseling_ts),
+        'intake_ts':        json.dumps(intake_ts),
+    })
 
 
 # ——————————————————————————————————————————————————————————————

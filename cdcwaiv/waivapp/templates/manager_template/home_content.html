@@ -1,12 +1,127 @@
 {% extends 'manager_template/base_template.html' %}
-{% block page_title %}
-Home
-{% endblock page_title %}
+
+{% block page_title %}Dashboard{% endblock %}
 
 {% block main_content %}
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-        </div><!-- /.container-fluid -->
-      </section>
-{% endblock main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Case Status (bar) -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Case Status (Last 1 Month)</h3></div>
+          <div class="card-body">
+            <canvas id="caseStatusChart" style="height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Sessions per Staff (bar) -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Sessions per Staff (Last 1 Month)</h3></div>
+          <div class="card-body">
+            <canvas id="staffChart" style="height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Counseling sessions (line) -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Counseling Sessions by Day</h3></div>
+          <div class="card-body">
+            <canvas id="counselingChart" style="height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- New intakes (line) -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">New Intakes by Day</h3></div>
+          <div class="card-body">
+            <canvas id="intakeChart" style="height:300px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+
+{% block custom_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const tsLabels       = {{ ts_labels|safe }};
+  const counselingData = {{ counseling_ts|safe }};
+  const intakeData     = {{ intake_ts|safe }};
+
+  // 1) Case Status (bar)
+  new Chart(document.getElementById('caseStatusChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ cs_labels|safe }},
+      datasets: [{
+        label: '# of status changes',
+        data: {{ cs_values|safe }},
+        backgroundColor: 'rgba(54,162,235,0.6)',
+        borderColor:   'rgba(54,162,235,1)',
+        borderWidth: 1
+      }]
+    },
+    options: { maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } }}
+  });
+
+  // 2) Sessions per Staff (bar)
+  new Chart(document.getElementById('staffChart'), {
+    type: 'bar',
+    data: {
+      labels: {{ staff_labels|safe }},
+      datasets: [{
+        label: '# of Sessions',
+        data: {{ staff_values|safe }},
+        backgroundColor: 'rgba(255,159,64,0.6)',
+        borderColor:   'rgba(255,159,64,1)',
+        borderWidth: 1
+      }]
+    },
+    options: { maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } }}
+  });
+
+  // 3) Counseling Sessions by Day (line)
+  new Chart(document.getElementById('counselingChart'), {
+    type: 'line',
+    data: {
+      labels: tsLabels,
+      datasets: [{
+        label: '# Sessions',
+        data: counselingData,
+        fill: false,
+        borderColor: 'rgba(75,192,192,1)',
+        tension: 0.1
+      }]
+    },
+    options: { maintainAspectRatio:false }
+  });
+
+  // 4) New Intakes by Day (line)
+  new Chart(document.getElementById('intakeChart'), {
+    type: 'line',
+    data: {
+      labels: tsLabels,
+      datasets: [{
+        label: '# New Intakes',
+        data: intakeData,
+        fill: false,
+        borderColor: 'rgba(153,102,255,1)',
+        tension: 0.1
+      }]
+    },
+    options: { maintainAspectRatio:false }
+  });
+});
+</script>
+{% endblock %}
