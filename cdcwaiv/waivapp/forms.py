@@ -97,12 +97,12 @@ class AddStudentForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
     last_name = forms.CharField(
-        label="Last Name",
+        label="Last Name (capitalized First letter)",
         max_length=100,
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
     first_name = forms.CharField(
-        label="First Name",
+        label="First Name (capitalized First letter)",
         max_length=100,
         widget=forms.TextInput(attrs={"class": "form-control"})
     )

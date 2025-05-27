@@ -1,0 +1,360 @@
+{% extends 'staff_template/base_template.html' %}
+
+{% block page_title %}
+  Edit Student | CSULB ID: {{ student.csulb_id }} |
+  Name: {{ student.first_name }} {{ student.last_name }}
+{% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Edit Student</h3>
+          </div>
+
+          <form
+            method="post"
+            action="{% url 'staff_edit_student_save' student.csulb_id %}"
+            role="form"
+          >
+            {% csrf_token %}
+            <div class="card-body">
+
+              <div class="row">
+                <!-- LEFT COLUMN -->
+                <div class="col-md-6">
+                  <!-- CSULB ID (readonly) -->
+                  <div class="form-group">
+                    <label for="id_csulb_id">CSULB ID</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_csulb_id"
+                      name="csulb_id"
+                      value="{{ student.csulb_id }}"
+                      readonly
+                    />
+                  </div>
+
+                  <!-- Participant ID -->
+                  <div class="form-group">
+                    <label for="id_participant_id">Participant ID</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_participant_id"
+                      name="participant_id"
+                      value="{{ student.participant_id }}"
+                    />
+                  </div>
+
+                  <!-- Last & First Name -->
+                  <div class="form-group">
+                    <label for="id_last_name">Last Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_last_name"
+                      name="last_name"
+                      value="{{ student.last_name }}"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="id_first_name">First Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_first_name"
+                      name="first_name"
+                      value="{{ student.first_name }}"
+                    />
+                  </div>
+
+                  <!-- DOB -->
+                  <div class="form-group">
+                    <label for="id_dob">Date of Birth</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="id_dob"
+                      name="dob"
+                      value="{{ student.birthdate|date:'Y-m-d' }}"
+                    />
+                  </div>
+
+                  <!-- Employment Goal -->
+                  <div class="form-group">
+                    <label for="id_employ_goal">Employment Goal</label>
+                    <textarea
+                      class="form-control"
+                      id="id_employ_goal"
+                      name="employ_goal"
+                      rows="1"
+                    >{{ student.employ_goal }}</textarea>
+                  </div>
+
+                  <!-- Academic Plan -->
+                  <div class="form-group">
+                    <label for="id_academic_plan">Academic Plan</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_academic_plan"
+                      name="academic_plan"
+                      value="{{ academic_log.academic_plan|default_if_none:'' }}"
+                    />
+                  </div>
+
+                  <!-- Academic Level -->
+                  <div class="form-group">
+                    <label for="id_academic_level">Academic Level</label>
+                    <select
+                      class="form-control"
+                      id="id_academic_level"
+                      name="academic_level"
+                    >
+                      {% for lvl in academic_levels %}
+                        <option
+                          value="{{ lvl }}"
+                          {% if academic_log.academic_level == lvl %}selected{% endif %}
+                        >
+                          {{ lvl }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <!-- GPA -->
+                  <div class="form-group">
+                    <label for="id_gpa">GPA</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="4"
+                      class="form-control"
+                      id="id_gpa"
+                      name="gpa"
+                      value="{{ academic_log.gpa|default_if_none:'' }}"
+                    />
+                  </div>
+
+                  <!-- Email, Phone, City -->
+                  <div class="form-group">
+                    <label for="id_email">Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="id_email"
+                      name="email"
+                      value="{{ student.email }}"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="id_phone">Phone</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_phone"
+                      name="phone"
+                      value="{{ student.phone }}"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="id_city">City</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_city"
+                      name="city"
+                      value="{{ student.city }}"
+                    />
+                  </div>
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-md-6">
+                  <!-- Enrollment Date -->
+                  <div class="form-group">
+                    <label for="id_enroll_date">Enrollment Date</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="id_enroll_date"
+                      name="enroll_date"
+                      value="{{ student.enrollment_date|date:'Y-m-d' }}"
+                    />
+                  </div>
+
+                  <!-- Intake Status -->
+                  <div class="form-group">
+                    <label for="id_intake_status">Intake Status</label>
+                    <select
+                      class="form-control"
+                      id="id_intake_status"
+                      name="intake_status"
+                    >
+                      <option value="1" {% if student.intake_status %}selected{% endif %}>
+                        Yes
+                      </option>
+                      <option value="0" {% if not student.intake_status %}selected{% endif %}>
+                        No
+                      </option>
+                    </select>
+                  </div>
+
+                  <!-- Disability -->
+                  <div class="form-group">
+                    <label for="id_disability_type">Disability Type</label>
+                    <select
+                      class="form-control"
+                      id="id_disability_type"
+                      name="disability_type"
+                    >
+                      <option value="">— Select —</option>
+                      {% for key,label in student.DISABILITY_CHOICES %}
+                        <option value="{{ key }}"
+                          {% if student.disability_type == key %}selected{% endif %}
+                        >
+                          {{ label }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="id_disability_detail">Disability Detail</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_disability_detail"
+                      name="disability_detail"
+                      value="{{ student.disability_detail }}"
+                    />
+                  </div>
+
+                  <!-- Case Manager & Counselor -->
+                  <div class="form-group">
+                    <label for="id_case_manager">Case Manager</label>
+                    <select
+                      class="form-control"
+                      id="id_case_manager"
+                      name="case_manager"
+                    >
+                      <option value="">— Select —</option>
+                      {% for cm in case_managers %}
+                        <option
+                          value="{{ cm.id }}"
+                          {% if student.case_manager_id == cm.id %}selected{% endif %}
+                        >
+                          {{ cm.first_name }} {{ cm.last_name }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="id_dedicated_staff">Dedicated Counselor</label>
+                    <select
+                      class="form-control"
+                      id="id_dedicated_staff"
+                      name="dedicated_staff"
+                    >
+                      <option value="">— Select —</option>
+                      {% for c in counselors %}
+                        <option
+                          value="{{ c.id }}"
+                          {% if student.dedicated_staff_id == c.id %}selected{% endif %}
+                        >
+                          {{ c.first_name }} {{ c.last_name }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <!-- Case Status -->
+                  <div class="form-group">
+                    <label for="id_case_status_info">Case Status</label>
+                    <select
+                      class="form-control"
+                      id="id_case_status_info"
+                      name="case_status"
+                    >
+                      <option value="">— Select —</option>
+                      {% for cs in case_statuses %}
+                        <option
+                          value="{{ cs.case_status_code }}"
+                          {% if current_status_code == cs.case_status_code %}selected{% endif %}
+                        >
+                          {{ cs.case_status_code }} – {{ cs.case_description }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <!-- Student Documents -->
+                  <div class="form-group">
+                    <label>Student Documents</label>
+                    {% for item in DOC_ITEMS %}
+                      <div class="row mb-2">
+                        <div class="col-md-4">
+                          <div class="icheck-primary">
+                            <input
+                              type="checkbox"
+                              id="checkbox_{{ item.type }}"
+                              name="checkbox_{{ item.type }}"
+                              {% if item.doc %}checked{% endif %}
+                            />
+                            <label for="checkbox_{{ item.type }}">
+                              {{ item.type|capfirst }}
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label>Received Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            name="received_{{ item.type }}"
+                            value="{{ item.doc.received_date|date:'Y-m-d' }}"
+                          />
+                        </div>
+                        <div class="col-md-4">
+                          <label>Expiry Date</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            name="expiry_{{ item.type }}"
+                            value="{{ item.doc.expiry_date|date:'Y-m-d' }}"
+                          />
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+
+                </div>
+              </div>
+            </div><!-- /.card-body -->
+
+            <div class="card-footer text-center">
+              <button type="submit" class="btn btn-success">Save Changes</button>
+              <a
+                href="{% url 'staff_edit_student' student.csulb_id %}"
+                class="btn btn-secondary ml-2"
+              >
+                Cancel
+              </a>
+            </div>
+          </form>
+        </div><!-- /.card -->
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>
+{% endblock %}

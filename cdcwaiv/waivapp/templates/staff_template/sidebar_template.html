@@ -1,0 +1,71 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link">
+      <img src="{% static "dist/img/waivlogo.jpg" %}" alt="WAIV Logo" class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+      <span class="brand-text font-weight-light">WAIV SMS</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{% static "dist/img/user-icon.png" %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block">{{ user.first_name }} {{ user.last_name }}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <li class="nav-item">
+            {% url 'staff_home' as staff_home %}
+            <a href="{{ staff_home }}" class="nav-link {% if request.path == staff_home %} active {% endif %}">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                    Dashboard
+                    {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+            </a>
+          </li>
+
+          {# MANAGE STUDENTS #}
+          <li class="nav-item">
+            {% url 'staff_manage_student'   as manage_stu %}
+            <a href="{{ manage_stu }}"
+              class="nav-link {% if request.resolver_match.url_name == 'staff_manage_student' %}active{% endif %}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Manage Students</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'staff_add_counseling'   as add_cs %}
+            <a href="{{ add_cs }}" class="nav-link {% if request.path == add_cs %} active {% endif %}">
+              <i class="nav-icon fas fa-address-book"></i>
+              <p>
+                Add Counseling Session
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+           {% url 'staff_view_counseling'  as view_cs %}
+            <a href="{{ view_cs }}" class="nav-link {% if request.path == view_cs %} active {% endif %}">
+              <i class="nav-icon fas fa-edit"></i>
+              <p>
+                View Counseling Session
+              </p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
