@@ -25,6 +25,7 @@ class LoginCheckMiddleWare(MiddlewareMixin):
         'staff_view_counseling', # View counseling logs
         'staff_manage_student',  # Manage students list
         'staff_view_student',    # View a single student’s detail
+        'staff_edit_student',
     }
 
     def process_view(self, request, view_func, view_args, view_kwargs):
