@@ -282,6 +282,7 @@ def edit_student_save(request, csulb_id):
         student.disability_detail  = request.POST.get("disability_detail", "")
         student.case_manager_id    = request.POST.get("case_manager") or None
         student.dedicated_staff_id = request.POST.get("dedicated_staff") or None
+        student.save()
         if new_status and new_status != old_status:
             StudentLog.objects.create(
                 csulb_id=student,
@@ -318,4 +319,4 @@ def edit_student_save(request, csulb_id):
                 ).delete()
 
     messages.success(request, "Student record updated successfully.")
-    return redirect('staff_edit_student', csulb_id=csulb_id)
+    return redirect('staff_edit_student', csulb_id=student.csulb_id)
