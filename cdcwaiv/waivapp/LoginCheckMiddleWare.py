@@ -26,6 +26,7 @@ class LoginCheckMiddleWare(MiddlewareMixin):
         'staff_manage_student',  # Manage students list
         'staff_view_student',    # View a single student’s detail
         'staff_edit_student',
+        'staff_edit_student_save',
     }
 
     def process_view(self, request, view_func, view_args, view_kwargs):
