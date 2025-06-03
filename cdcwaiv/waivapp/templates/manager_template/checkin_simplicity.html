@@ -1,47 +1,64 @@
 {% extends 'manager_template/base_template.html' %}
-{% block page_title %}WAIV Student Check‐in (Simplicity){% endblock %}
+
+{% block page_title %}WAIV Student Check-in – Source: Simplicity{% endblock %}
 
 {% block main_content %}
 <section class="content">
   <div class="container-fluid">
 
-    {# Flash messages #}
+    {# 1) Flash messages #}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
 
-    {# FILTER BY IMPORTED DATE #}
+    {# 2) Filter card #}
     <div class="card card-secondary">
       <div class="card-header">
-        <h3 class="card-title">Filter by Imported Date</h3>
+        <h3 class="card-title">Filter by Imported Date or CSULB ID</h3>
       </div>
       <div class="card-body">
         <form method="get" action="{% url 'checkin_simplicity' %}">
           <div class="row">
+            {# CSULB ID search box #}
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="filter_search">CSULB ID</label>
+                <input
+                  type="text"
+                  id="filter_search"
+                  name="search"
+                  class="form-control"
+                  placeholder="Enter full or partial ID"
+                  value="{{ search|default_if_none:'' }}"
+                >
+              </div>
+            </div>
+
+            {# Imported Date dropdown #}
             <div class="col-md-4">
               <div class="form-group">
                 <label for="filter_imported_date">Imported Date</label>
-                <select id="filter_imported_date"
-                        name="imported_date"
-                        class="form-control">
+                <select
+                  id="filter_imported_date"
+                  name="imported_date"
+                  class="form-control"
+                >
                   <option value="">— All Dates —</option>
-                  {% for dt in distinct_dates %}
-                    <option value="{{ dt|date:'Y-m-d' }}"
-                      {% if dt|date:"Y-m-d" == selected_date %}selected{% endif %}>
-                      {{ dt|date:"Y-m-d" }}
+                  {% for date in distinct_dates %}
+                    <option
+                      value="{{ date|date:'Y-m-d' }}"
+                      {% if date|date:'Y-m-d' == selected_date %}selected{% endif %}
+                    >
+                      {{ date|date:"F d, Y" }}
                     </option>
                   {% endfor %}
                 </select>
               </div>
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-              <button type="submit" class="btn btn-primary">
-                Apply
-              </button>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
+
+            {# Apply / Clear buttons (same line) #}
+            <div class="col-md-4 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary mr-2">Apply</button>
               <a href="{% url 'checkin_simplicity' %}" class="btn btn-outline-secondary">
                 Clear
               </a>
@@ -51,17 +68,17 @@
       </div>
     </div>
 
-    {# RESULTS TABLE #}
+    {# 3) Results table #}
     <div class="card card-primary">
       <div class="card-header">
-        <h3 class="card-title">Student Check‐in Records</h3>
+        <h3 class="card-title">Student Check-in CDC (walk-in / event)</h3>
       </div>
       <div class="card-body table-responsive p-0" style="max-height: 500px;">
         <table class="table table-hover text-nowrap">
           <thead>
             <tr>
               <th>CSULB ID</th>
-              <th>Date Check‐in</th>
+              <th>Date Check-in</th>
               <th>Event Type</th>
               <th>Name</th>
               <th>Location</th>
@@ -73,18 +90,18 @@
             {% for log in logs %}
               <tr>
                 <td>{{ log.csulb_id }}</td>
-                <td>{{ log.date_checkin|default_if_none:"—" }}</td>
-                <td>{{ log.event_type|default:"—" }}</td>
-                <td>{{ log.name|default:"—" }}</td>
-                <td>{{ log.location|default:"—" }}</td>
+                <td>{{ log.date_checkin }}</td>
+                <td>{{ log.event_type|default:'—' }}</td>
+                <td>{{ log.name }}</td>
+                <td>{{ log.location }}</td>
                 <td>
                   {% if log.staff %}
-                    {{ log.staff.first_name }} {{ log.staff.last_name }}
+                    {{ log.staff.get_full_name }}
                   {% else %}
                     —
                   {% endif %}
                 </td>
-                <td>{{ log.imported_date|date:"Y-m-d" }}</td>
+                <td>{{ log.imported_date }}</td>
               </tr>
             {% empty %}
               <tr>
@@ -94,8 +111,11 @@
           </tbody>
         </table>
       </div>
+      <div class="card-footer clearfix">
+        {# Pagination controls (optional) can go here #}
+      </div>
     </div>
 
-  </div>
+  </div><!-- /.container-fluid -->
 </section>
 {% endblock %}
