@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from waivapp.forms import AddStudentForm
-from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog, StudentDoc, WaivServiceInfo,CounselingLog, MonthlyClientListingLog
+from waivapp.models import WaivUser, StudentPersonalInfo, StudentLog, CaseStatusInfo, StudentAcademicLog, StudentDoc, WaivServiceInfo,CounselingLog, MonthlyClientListingLog, CheckinSimplicity
 import pandas as pd
 import string
 import datetime
@@ -268,6 +268,126 @@ def import_monthly_client_listing(request):
         return redirect('import_monthly_client_listing')
 
     return render(request, 'manager_template/import_monthly_client_log.html')
+
+def import_checkin_simplicity(request):
+    """
+    Upload a CSV or XLSX of Simplicity check-in data. If Event_Type is blank
+    but Staff_Name is provided, fill Event_Type = "In-person counseling".
+    """
+    if request.method == 'POST':
+        f = request.FILES.get('file')
+        if not f:
+            messages.error(request, "No file was uploaded.")
+            return redirect('import_checkin_simplicity')
+
+        # 1) Read into DataFrame (all columns as strings)
+        if f.name.lower().endswith('.csv'):
+            try:
+                df = pd.read_csv(f, dtype=str)
+            except Exception as e:
+                messages.error(request, f"Error reading CSV: {e}")
+                return redirect('import_checkin_simplicity')
+        else:
+            try:
+                df = pd.read_excel(f, dtype=str)
+            except ImportError:
+                messages.error(
+                    request,
+                    "To import .xlsx you need openpyxl. Install via `pip install openpyxl`, or upload a CSV."
+                )
+                return redirect('import_checkin_simplicity')
+            except Exception as e:
+                messages.error(request, f"Error reading Excel: {e}")
+                return redirect('import_checkin_simplicity')
+
+        # 2) Iterate rows
+        for _, row in df.iterrows():
+            def get_str(col):
+                v = row.get(col)
+                return v.strip() if isinstance(v, str) else ''
+
+            pid        = get_str('Student ID')   # e.g. "123456"
+            raw_staff  = get_str('Counselor')       # e.g. "DOE, JOHN"
+            event_type = get_str('Event Type')       # might be blank
+            name       = get_str('Name')             # student’s name
+            location   = get_str('Location')         # event/location
+
+            # If Event_Type is blank but we do have a Staff_Name, assume “In-person counseling”
+            if (not event_type) and raw_staff:
+                event_type = "In-person counseling"
+
+            # Parse "Date_Checkin" like "9/6/2024  12:00:00 PM"
+            def parse_date(col):
+                v = row.get(col)
+                if pd.isna(v) or v == '':
+                    return None
+                try:
+                    # Try exact "M/D/YYYY HH:MM:SS AM/PM" format
+                    return pd.to_datetime(v, format="%m/%d/%Y %I:%M:%S %p").date()
+                except Exception:
+                    try:
+                        return pd.to_datetime(v).date()
+                    except Exception:
+                        return None
+
+            date_checkin = parse_date('Time Recorded')
+
+            # Normalize staff name ("DOE, JOHN" → "John Doe") and attempt lookup
+            counselor_name = string.capwords(raw_staff.replace(",", "").lower())
+            staff_instance = None
+            if counselor_name:
+                parts = counselor_name.split()
+                if len(parts) >= 2:
+                    first, last = parts[0], " ".join(parts[1:])
+                    staff_instance = WaivUser.objects.filter(
+                        first_name__iexact=first,
+                        last_name__iexact=last
+                    ).first()
+
+            # 3) Create/update CheckinSimplicity (no FK enforcement on csulb_id)
+            CheckinSimplicity.objects.update_or_create(
+                csulb_id=pid,
+                date_checkin=date_checkin,
+                event_type=event_type,
+                defaults={
+                    'staff':    staff_instance,
+                    'name':     name,
+                    'location': location,
+                }
+            )
+
+        messages.success(request, "Imported check-in simplicity log successfully.")
+        return redirect('import_checkin_simplicity')
+
+    return render(request, 'manager_template/import_checkin_simplicity.html')
+
+def checkin_simplicity(request):
+    """
+    Show all CheckinSimplicity rows, optionally filtered by imported_date.
+    """
+    import datetime
+    # Grab a sorted list of every distinct imported_date
+    distinct_dates = (
+        CheckinSimplicity.objects
+        .values_list('imported_date', flat=True)
+        .order_by('-imported_date')
+        .distinct()
+    )
+
+    ud   = request.GET.get('imported_date')
+    logs = CheckinSimplicity.objects.all().order_by('-imported_date')
+    if ud:
+        try:
+            parsed_date = datetime.datetime.strptime(ud, '%Y-%m-%d').date()
+            logs = logs.filter(imported_date=parsed_date)
+        except ValueError:
+            pass
+
+    return render(request, 'manager_template/checkin_simplicity.html', {
+        'logs':           logs,
+        'distinct_dates': distinct_dates,
+        'selected_date':  ud or '',
+    })
 
 def monthly_client_listing(request):
     logs = MonthlyClientListingLog.objects.all().order_by('-updated_date')

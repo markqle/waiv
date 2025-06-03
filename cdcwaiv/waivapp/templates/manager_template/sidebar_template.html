@@ -86,7 +86,7 @@
           <li class="nav-item">
             {% url 'view_counseling' as view_counseling %}
             <a href="{{ view_counseling }}" class="nav-link {% if request.path == view_counseling %} active {% endif %}">
-              <i class="nav-icon fas fa-edit"></i>
+              <i class="nav-icon fas fa-search"></i>
               <p>
                 View Counseling Session
               </p>
@@ -107,6 +107,24 @@
               <i class="nav-icon fas fa-search"></i>
               <p>
                 View Monthly DOR Listing
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            {% url 'import_checkin_simplicity' as import_checkin_simplicity %}
+            <a href="{{ import_checkin_simplicity }}" class="nav-link  {% if request.path == import_checkin_simplicity %} active {% endif %}">
+              <i class="nav-icon fas fa-clipboard"></i>
+              <p>
+                Import Check-in Simplicity
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            {% url 'checkin_simplicity' as checkin_simplicity %}
+            <a href="{{ checkin_simplicity }}" class="nav-link  {% if request.path == checkin_simplicity %} active {% endif %}">
+              <i class="nav-icon fas fa-search"></i>
+              <p>
+                View Check-in Simplicity
               </p>
             </a>
           </li>

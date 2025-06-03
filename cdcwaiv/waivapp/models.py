@@ -79,6 +79,28 @@ class StudentLog(models.Model):
     case_status_code = models.ForeignKey(CaseStatusInfo, on_delete=models.SET_NULL, null=True)
     updated_date = models.DateTimeField(auto_now_add=True)
 
+class CheckinSimplicity(models.Model):
+    # Change this from a ForeignKey to a simple CharField:
+    csulb_id      = models.CharField(
+        max_length=20,
+        help_text="Raw Participant_ID from Simplicity (no FK lookup).",
+    )
+    date_checkin  = models.DateField(null=True, blank=True)
+    event_type    = models.CharField(max_length=255)
+    staff         = models.ForeignKey(
+        WaivUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="checkin_counselor"
+    )
+    name          = models.CharField(max_length=255)
+    location      = models.CharField(max_length=255)
+    imported_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.csulb_id} @ {self.date_checkin} ({self.event_type})"
+
 class WaivServiceInfo(models.Model):
     service_type = models.IntegerField(primary_key=True)
     service_description = models.CharField(max_length=255)
