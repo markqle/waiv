@@ -1,5 +1,9 @@
+{# manager_template/monthly_report_detail.html #}
 {% extends 'manager_template/base_template.html' %}
-{% block page_title %}Monthly Report for {{ student.first_name }}{% endblock %}
+
+{% block page_title %}
+  Monthly Report for {{ student.first_name }} {{ student.last_name }}
+{% endblock %}
 
 {% block main_content %}
 <section class="content">
@@ -8,6 +12,7 @@
     <form method="post">
       {% csrf_token %}
 
+      {# === 1) STUDENT INFO HEADER === #}
       <h4>Student Info</h4>
       <div class="row mb-3">
         <div class="col"><strong>CSULB ID:</strong> {{ student.csulb_id }}</div>
@@ -16,29 +21,77 @@
       </div>
       <div class="row mb-3">
         <div class="col"><strong>Employment Goal:</strong> {{ student.employ_goal }}</div>
-        <div class="col"><strong>Case Manager:</strong> {{ case_manager.get_full_name }}</div>
+        <div class="col"><strong>Program Coordinator:</strong> {{ case_manager.get_full_name }}</div>
         <div class="col"><strong>DOR Counselor:</strong> {{ dor_counselor }}</div>
       </div>
 
+      {# === 2) COUNSELING SESSIONS TABLE === #}
       <h4>Counseling Sessions</h4>
-      <table class="table table-sm table-bordered mb-4">
-        <thead>
-          <tr>
-            <th>Service Type</th><th>Staff</th><th>Date</th><th>Case Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for note in counseling_logs %}
-          <tr>
-            <td>{{ note.service_type.service_description }}</td>
-            <td>{{ note.staff.get_full_name }}</td>
-            <td>{{ note.date_checkin }}</td>
-            <td>{{ note.case_note }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-responsive mb-4">
+        <table class="table table-sm table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Service Type</th>
+              <th>Staff</th>
+              <th>Date</th>
+              <th>Case Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for note in counseling_logs %}
+              <tr>
+                <td>{{ note.service_type.service_description }}</td>
+                <td>{{ note.staff.get_full_name }}</td>
+                <td>{{ note.date_checkin }}</td>
+                <td>{{ note.case_note }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="4" class="text-center text-muted">No counseling sessions recorded.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
+      {# === 3) NEW: CDC EVENT PARTICIPATION TABLE === #}
+      <h4>CDC Event Participation</h4>
+      <div class="table-responsive mb-4">
+        <table class="table table-sm table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Event Type</th>
+              <th>Date Check-in</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Counselor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in checkins %}
+              <tr>
+                <td>{{ event.event_type }}</td>
+                <td>{{ event.date_checkin }}</td>
+                <td>{{ event.name }}</td>
+                <td>{{ event.location }}</td>
+                <td>
+                  {% if event.staff %}
+                    {{ event.staff.get_full_name }}
+                  {% else %}
+                    &mdash;
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="text-center text-muted">No CDC event participation found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {# === 4) PROGRESS / PLAN FIELDS === #}
       <div class="form-group">
         <label for="id_progress">Describe Consumer Progress toward IPE</label>
         <textarea
@@ -58,6 +111,7 @@
         >{{ form_data.plan }}</textarea>
       </div>
 
+      {# === 5) STAFF SIGNATURE / DATE / TITLE === #}
       <div class="form-row mt-4">
         <div class="form-group col-md-4">
           <label for="id_staff_sign">Staff Signature</label>
@@ -100,6 +154,7 @@
         Export PDF
       </button>
     </form>
+
   </div>
 </section>
 {% endblock %}

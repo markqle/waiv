@@ -1,74 +1,143 @@
-{# templates/manager_template/monthly_report_pdf.html #}
+{# manager_template/monthly_report_pdf.html #}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <title>Monthly Report – {{ student.first_name }} {{ student.last_name }}</title>
   <style>
-    body { font-family: sans-serif; font-size: 12px; }
-    h2, h3 { margin-bottom: .25em; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
-    th, td { border: 1px solid #333; padding: 4px; text-align: left; }
-    .section { margin-bottom: 1.5em; }
-    .label { font-weight: bold; }
+    /* Basic styling for PDF */
+    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+    h4 { margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    th, td { border: 1px solid #333; padding: 4px; }
+    th { background-color: #f0f0f0; }
+    .no-data { text-align: center; color: #777; }
+    .section-header { margin-top: 16px; margin-bottom: 4px; font-weight: bold; }
+    .two-column { width: 50%; display: inline-block; vertical-align: top; }
+    .signature-block { margin-top: 32px; }
+    .signature-label { display: inline-block; width: 30%; }
+    .signature-field { display: inline-block; width: 65%; border-bottom: 1px solid #333; }
   </style>
 </head>
 <body>
-
+  {# === 1) STUDENT INFO === #}
   <h2>Monthly Report for {{ student.first_name }} {{ student.last_name }} || California State University Long Beach</h2>
+  <h4>Student Info</h4>
+  <table>
+    <tr>
+      <th style="width: 20%;">CSULB ID</th>
+      <td style="width: 30%;">{{ student.csulb_id }}</td>
+      <th style="width: 20%;">Name</th>
+      <td style="width: 30%;">{{ student.first_name }} {{ student.last_name }}</td>
+    </tr>
+    <tr>
+      <th>DOB</th>
+      <td>{{ student.birthdate }}</td>
+      <th>Employment Goal</th>
+      <td>{{ student.employ_goal }}</td>
+    </tr>
+    <tr>
+      <th>Program Coordinator</th>
+      <td>{{ case_manager.get_full_name }}</td>
+      <th>DOR Counselor</th>
+      <td>{{ dor_counselor }}</td>
+    </tr>
+  </table>
 
-  <div class="section">
-    <h3>Student Information</h3>
-    <p><span class="label">CSULB ID:</span> {{ student.csulb_id }}</p>
-    <p><span class="label">Date of Birth:</span> {{ student.birthdate }}</p>
-    <p><span class="label">Employment Goal:</span> {{ student.employ_goal }}</p>
-    <p><span class="label">Case Manager:</span> {{ case_manager.get_full_name }}</p>
-    <p><span class="label">DOR Counselor:</span> {{ dor_counselor }}</p>
-  </div>
-
-  <div class="section">
-    <h3>Counseling Sessions</h3>
-    {% if counseling_logs %}
-    <table>
-      <thead>
-        <tr>
-          <th>Service Type</th>
-          <th>Staff</th>
-          <th>Date</th>
-          <th>Case Note</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for note in counseling_logs %}
+  {# === 2) COUNSELING SESSIONS === #}
+  <h4 class="section-header">Counseling Sessions</h4>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Service Type</th>
+        <th style="width: 20%;">Staff</th>
+        <th style="width: 15%;">Date</th>
+        <th style="width: 40%;">Case Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for note in counseling_logs %}
         <tr>
           <td>{{ note.service_type.service_description }}</td>
           <td>{{ note.staff.get_full_name }}</td>
           <td>{{ note.date_checkin }}</td>
           <td>{{ note.case_note }}</td>
         </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-      <p>No counseling sessions found for this student.</p>
-    {% endif %}
-  </div>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="no-data">No counseling sessions recorded.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-  <div class="section">
-    <h3>Describe Consumer Progress toward IPE</h3>
-    <p>{{ progress|default:"—" }}</p>
-  </div>
+  {# === 3) CDC EVENT PARTICIPATION === #}
+  <h4 class="section-header">CDC Event Participation</h4>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 20%;">Event Type</th>
+        <th style="width: 15%;">Date Check-in</th>
+        <th style="width: 25%;">Name</th>
+        <th style="width: 20%;">Location</th>
+        <th style="width: 20%;">Counselor</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in checkins %}
+        <tr>
+          <td>{{ event.event_type }}</td>
+          <td>{{ event.date_checkin }}</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.location }}</td>
+          <td>
+            {% if event.staff %}
+              {{ event.staff.get_full_name }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="no-data">No CDC event participation found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-  <div class="section">
-    <h3>Plan for Next Step</h3>
-    <p>{{ plan|default:"—" }}</p>
-  </div>
+  {# === 4) PROGRESS & PLAN === #}
+  <h4 class="section-header">Progress & Plan</h4>
+  <table>
+    <tr>
+      <td style="width: 50%; vertical-align: top;">
+        <strong>Progress toward IPE:</strong><br>
+        <div style="margin-top: 4px; border: 1px solid #333; padding: 6px; min-height: 60px;">
+          {{ progress }}
+        </div>
+      </td>
+      <td style="width: 50%; vertical-align: top;">
+        <strong>Plan for Next Step:</strong><br>
+        <div style="margin-top: 4px; border: 1px solid #333; padding: 6px; min-height: 60px;">
+          {{ plan }}
+        </div>
+      </td>
+    </tr>
+  </table>
 
-  <div class="section">
-    <h3>Staff Signature</h3>
-    <p><span class="label">Signature:</span> {{ staff_sign }}</p>
-    <p><span class="label">Title:</span> {{ staff_title }}</p>
-    <p><span class="label">Date:</span> {{ date }}</p>
+  {# === 5) STAFF SIGNATURE / DATE / TITLE === #}
+  <div class="signature-block">
+    <div><span class="signature-label">Staff Signature:</span>
+      <span class="signature-field">{{ staff_sign }}</span>
+    </div>
+    <div style="margin-top: 12px;">
+      <span class="signature-label">Date:</span>
+      <span class="signature-field">{{ date }}</span>
+    </div>
+    <div style="margin-top: 12px;">
+      <span class="signature-label">Title of Staff:</span>
+      <span class="signature-field">{{ staff_title }}</span>
+    </div>
   </div>
-
 </body>
 </html>

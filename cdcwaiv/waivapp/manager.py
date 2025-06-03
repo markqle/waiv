@@ -704,6 +704,12 @@ def monthly_report_detail(request):
         .order_by('date_checkin')
     )
 
+    checkins = (
+        CheckinSimplicity.objects
+        .filter(csulb_id=student.csulb_id)
+        .order_by('-date_checkin')
+    )
+
     # initial form data
     today = datetime.date.today().strftime("%Y-%m-%d")
     defaults = {
@@ -750,5 +756,6 @@ def monthly_report_detail(request):
         'case_manager':    case_manager,
         'dor_counselor':   counselor,
         'counseling_logs': counseling_logs,
+        'checkins':        checkins,
         **defaults,
     })
