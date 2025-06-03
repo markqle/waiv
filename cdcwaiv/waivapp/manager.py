@@ -365,7 +365,6 @@ def checkin_simplicity(request):
     """
     Show all CheckinSimplicity rows, optionally filtered by imported_date.
     """
-    import datetime
     # Grab a sorted list of every distinct imported_date
     distinct_dates = (
         CheckinSimplicity.objects
@@ -375,6 +374,7 @@ def checkin_simplicity(request):
     )
 
     ud   = request.GET.get('imported_date')
+    search = request.GET.get('search', '').strip()
     logs = CheckinSimplicity.objects.all().order_by('-imported_date')
     if ud:
         try:
@@ -382,11 +382,15 @@ def checkin_simplicity(request):
             logs = logs.filter(imported_date=parsed_date)
         except ValueError:
             pass
+    
+    if search:
+        logs = logs.filter(csulb_id__icontains=search)
 
     return render(request, 'manager_template/checkin_simplicity.html', {
         'logs':           logs,
         'distinct_dates': distinct_dates,
-        'selected_date':  ud or '',
+        'selected_date':  ud,
+        'search':         search,
     })
 
 def monthly_client_listing(request):
