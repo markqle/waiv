@@ -1,0 +1,101 @@
+{% extends 'manager_template/base_template.html' %}
+{% block page_title %}WAIV Student Check‐in (Simplicity){% endblock %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+
+    {# Flash messages #}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+
+    {# FILTER BY IMPORTED DATE #}
+    <div class="card card-secondary">
+      <div class="card-header">
+        <h3 class="card-title">Filter by Imported Date</h3>
+      </div>
+      <div class="card-body">
+        <form method="get" action="{% url 'checkin_simplicity' %}">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="filter_imported_date">Imported Date</label>
+                <select id="filter_imported_date"
+                        name="imported_date"
+                        class="form-control">
+                  <option value="">— All Dates —</option>
+                  {% for dt in distinct_dates %}
+                    <option value="{{ dt|date:'Y-m-d' }}"
+                      {% if dt|date:"Y-m-d" == selected_date %}selected{% endif %}>
+                      {{ dt|date:"Y-m-d" }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button type="submit" class="btn btn-primary">
+                Apply
+              </button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <a href="{% url 'checkin_simplicity' %}" class="btn btn-outline-secondary">
+                Clear
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {# RESULTS TABLE #}
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">Student Check‐in Records</h3>
+      </div>
+      <div class="card-body table-responsive p-0" style="max-height: 500px;">
+        <table class="table table-hover text-nowrap">
+          <thead>
+            <tr>
+              <th>CSULB ID</th>
+              <th>Date Check‐in</th>
+              <th>Event Type</th>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Counselor</th>
+              <th>Imported Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+              <tr>
+                <td>{{ log.csulb_id }}</td>
+                <td>{{ log.date_checkin|default_if_none:"—" }}</td>
+                <td>{{ log.event_type|default:"—" }}</td>
+                <td>{{ log.name|default:"—" }}</td>
+                <td>{{ log.location|default:"—" }}</td>
+                <td>
+                  {% if log.staff %}
+                    {{ log.staff.first_name }} {{ log.staff.last_name }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td>{{ log.imported_date|date:"Y-m-d" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" class="text-center">No records found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
