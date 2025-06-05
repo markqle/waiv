@@ -10,7 +10,7 @@
         {% for message in messages %}
           <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
-        <p>**<strong>Note</strong>: You have to <strong>format</strong> the document first, drop the "Name" column, and make sure the first name of DOR Counselors are capitalized</p>
+        <p>**<strong>Note</strong>: You have to <strong>format</strong> the document first, drop the "Name" column</p>
         <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">Upload CSV / Excel</h3>
@@ -22,7 +22,25 @@
 
             {% csrf_token %}
             <div class="card-body">
-
+              {# NEW: Period text‐input #}
+              <div class="form-group">
+                <label for="id_period">
+                  Period
+                  <small class="text-muted">(e.g. 03-2025)</small>
+                </label>
+                <input
+                  type="text"
+                  id="id_period"
+                  name="period"
+                  class="form-control"
+                  placeholder="MM-YYYY"
+                  required
+                >
+                <small class="form-text text-muted">
+                  Enter the “period” that this file covers (for example “03-2025”).
+                </small>
+              </div>
+              
               <div class="form-group">
                 <label for="id_file">
                   Select file <small class="text-muted">(CSV or .xlsx)</small>

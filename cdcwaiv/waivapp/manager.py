@@ -213,6 +213,8 @@ def add_counseling_save(request):
 
 def import_monthly_client_listing(request):
     if request.method == 'POST':
+        period= request.POST.get('period', '').strip()
+
         f = request.FILES['file']
         if f.name.lower().endswith('.csv'):
             df = pd.read_csv(f, dtype=str)
@@ -252,17 +254,24 @@ def import_monthly_client_listing(request):
             fund_end   = parse_date('Case_Contract_Fund_Source_End_Date')
             closure    = parse_date('Closure_Date')
 
-            MonthlyClientListingLog.objects.update_or_create(
-                participant_id=pid,
-                defaults={
-                    'case_status_code': case_status,
-                    'dor_counselor':    counselor,
-                    'fund_begin_date':  fund_begin,
-                    'fund_end_date':    fund_end,
-                    'closure_date':     closure,
-                    'district':         district,
-                }
-            )
+            try:
+                MonthlyClientListingLog.objects.create(
+                    participant_id     = pid,
+                    period             = period,
+                    case_status_code   = case_status,
+                    dor_counselor      = counselor,
+                    fund_begin_date    = fund_begin,
+                    fund_end_date      = fund_end,
+                    closure_date       = closure,
+                    district           = district
+                )
+            except Exception as e:
+                # If a particular row fails, we collect an error message and continue.
+                messages.error(
+                    request,
+                    f"Failed to insert Participant_ID={pid}, Period={period}: {e}"
+                )
+        
 
         messages.success(request, "Imported monthly client listing log successfully.")
         return redirect('import_monthly_client_listing')
@@ -394,13 +403,27 @@ def checkin_simplicity(request):
     })
 
 def monthly_client_listing(request):
+    # 1) Grab every distinct “period” (e.g. "03-2025") in descending order
+    distinct_periods = (
+        MonthlyClientListingLog.objects
+        .order_by('-period')  # or any ordering you like
+        .values_list('period', flat=True)
+        .distinct()
+    )
+
+    # 2) Figure out which period was chosen (if any)
+    selected_period = request.GET.get('period', '')
+
+    # 3) Build the base queryset and filter by period if provided
     logs = MonthlyClientListingLog.objects.all().order_by('-updated_date')
-    ud = request.GET.get('updated_date')
-    if ud:
-        logs = logs.filter(updated_date=ud)
-    return render(request,
-                  'manager_template/monthly_client_listing.html',
-                  {'logs': logs})
+    if selected_period:
+        logs = logs.filter(period=selected_period)
+
+    return render(request, 'manager_template/monthly_client_listing.html', {
+        'logs':             logs,
+        'distinct_periods': distinct_periods,
+        'selected_period':  selected_period,
+    })
 
 def manage_staff(request):
     staffs = WaivUser.objects.filter(position__in=['counselor', 'case_manager'])
