@@ -12,7 +12,7 @@ class CaseStatusInfo(models.Model):
         return f"{self.case_description}"
 
 class MonthlyClientListingLog(models.Model):
-    participant_id = models.CharField(max_length=20, unique=True, primary_key=True, db_column="participant_id")
+    participant_id = models.CharField(max_length=20)
     case_status_code = models.ForeignKey(CaseStatusInfo, on_delete=models.SET_NULL, null=True)
     dor_counselor = models.CharField(max_length=100)
     fund_begin_date = models.DateField(null=True, blank=True)
@@ -20,6 +20,17 @@ class MonthlyClientListingLog(models.Model):
     closure_date = models.DateField(null=True, blank=True)
     district = models.CharField(max_length=100)
     updated_date = models.DateField(auto_now_add=True)
+    period = models.CharField(
+        max_length=7,
+        blank=False,
+        help_text="e.g. 03-2025"
+    )
+    class Meta:
+        # unique_together = (('participant_id', 'period'),)
+        pass
+
+    def __str__(self):
+        return f"{self.participant_id} – {self.period or '(no period)'}"
 
 class WaivUser(AbstractUser):
     """Extends Django’s built-in User: handles login, is_active, permissions, etc."""

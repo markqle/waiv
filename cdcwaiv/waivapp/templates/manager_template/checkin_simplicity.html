@@ -12,16 +12,16 @@
     {% endfor %}
 
     {# 2) Filter card #}
-    <div class="card card-secondary">
+    <div class="card card-secondary mb-3">
       <div class="card-header">
         <h3 class="card-title">Filter by Imported Date or CSULB ID</h3>
       </div>
       <div class="card-body">
         <form method="get" action="{% url 'checkin_simplicity' %}">
-          <div class="row">
+          <div class="form-row">
             {# CSULB ID search box #}
             <div class="col-md-4">
-              <div class="form-group">
+              <div class="form-group mb-0">
                 <label for="filter_search">CSULB ID</label>
                 <input
                   type="text"
@@ -36,7 +36,7 @@
 
             {# Imported Date dropdown #}
             <div class="col-md-4">
-              <div class="form-group">
+              <div class="form-group mb-0">
                 <label for="filter_imported_date">Imported Date</label>
                 <select
                   id="filter_imported_date"
@@ -56,12 +56,17 @@
               </div>
             </div>
 
-            {# Apply / Clear buttons (same line) #}
-            <div class="col-md-4 d-flex align-items-end">
-              <button type="submit" class="btn btn-primary mr-2">Apply</button>
-              <a href="{% url 'checkin_simplicity' %}" class="btn btn-outline-secondary">
-                Clear
-              </a>
+            {# Buttons (same height as the form controls) #}
+            <div class="col-md-auto d-flex align-items-end">
+              <div class="form-group mb-0">
+                <button type="submit" class="btn btn-primary mr-2">
+                  Apply
+                </button>
+                <a href="{% url 'checkin_simplicity' %}"
+                   class="btn btn-outline-secondary">
+                  Clear
+                </a>
+              </div>
             </div>
           </div>
         </form>

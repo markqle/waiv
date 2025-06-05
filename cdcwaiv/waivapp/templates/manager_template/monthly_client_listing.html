@@ -7,42 +7,51 @@
 
     {# Flash messages #}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
 
-    <div class="card card-secondary">
+    <!-- ─── FILTER CARD ─────────────────────────────────────────────────── -->
+    <div class="card card-secondary mb-3">
       <div class="card-header">
-        <h3 class="card-title">Filter by Updated Date</h3>
+        <h3 class="card-title">Filter by Period</h3>
       </div>
       <div class="card-body">
-        <form method="get" action="/monthly_client_listing/">
-          <div class="row">
+        <form method="get" action="{% url 'monthly_client_listing' %}">
+          <div class="form-row">
+            <!-- PERIOD DROPDOWN -->
             <div class="col-md-4">
-              <div class="form-group">
-                <label for="filter_updated_date">Updated Date</label>
-                <input type="date"
-                       id="filter_updated_date"
-                       name="updated_date"
-                       class="form-control"
-                       value="{{ request.GET.updated_date|default_if_none:'' }}">
+              <div class="form-group mb-0">
+                <label for="filter_period">Period</label>
+                <select id="filter_period"
+                        name="period"
+                        class="form-control">
+                  <option value="">— All Periods —</option>
+                  {% for p in distinct_periods %}
+                    <option value="{{ p }}" {% if p == selected_period %}selected{% endif %}>
+                      {{ p }}
+                    </option>
+                  {% endfor %}
+                </select>
               </div>
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-              <button type="submit" class="btn btn-primary">
-                Apply
-              </button>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-              <a href="{% url 'monthly_client_listing' %}" class="btn btn-outline-secondary">
-                Clear
-              </a>
+
+            <!-- BUTTONS (same height as dropdown) -->
+            <div class="col-md-auto d-flex align-items-end">
+              <div class="form-group mb-0">
+                <button type="submit" class="btn btn-primary mr-2">
+                  Apply
+                </button>
+                <a href="{% url 'monthly_client_listing' %}"
+                   class="btn btn-outline-secondary">
+                  Clear
+                </a>
+              </div>
             </div>
           </div>
         </form>
       </div>
     </div>
+    <!-- ──────────────────────────────────────────────────────────────────── -->
 
     <div class="card card-primary">
       <div class="card-header">
@@ -52,6 +61,7 @@
         <table class="table table-hover text-nowrap">
           <thead>
             <tr>
+              <th>Period</th>
               <th>Participant ID</th>
               <th>Case Status</th>
               <th>Counselor</th>
@@ -65,8 +75,9 @@
           <tbody>
             {% for log in logs %}
               <tr>
+                <td>{{ log.period }}</td>
                 <td>{{ log.participant_id }}</td>
-                <td>{{ log.case_status_code.case_status_code }}</td>
+                <td>{{ log.case_status_code.case_description }}</td>
                 <td>{{ log.dor_counselor }}</td>
                 <td>{{ log.fund_begin_date }}</td>
                 <td>{{ log.fund_end_date|default_if_none:'—' }}</td>
@@ -76,16 +87,15 @@
               </tr>
             {% empty %}
               <tr>
-                <td colspan="8" class="text-center">No records found.</td>
+                <td colspan="9" class="text-center">No records found.</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
       <div class="card-footer clearfix">
-
-    </div>
-
+        {# (Optional) Pagination links could go here #}
+      </div>
     </div>
 
   </div><!-- /.container-fluid -->
