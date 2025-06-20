@@ -47,6 +47,7 @@ Manage WAIV Student
                                 <th>GPA</th>
                                 <th>Case Manager</th>
                                 <th>Dedicated Counselor</th>
+                                <th>Job Placement</th>
                                 <th>Action</th>
                                 </tr>
                             </thead>
@@ -89,6 +90,7 @@ Manage WAIV Student
                                         —
                                     {% endif %}
                                     </td>
+                                    <td>{{ student.job_placement }}</td>
                                     <!-- Edit link -->
                                     <td>
                                     <a href="/edit_student/{{student.csulb_id}}"

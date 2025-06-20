@@ -143,6 +143,13 @@ class AddStudentForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
 
+    job_placement = forms.CharField(
+        label="Job Placement (if applicable)",
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={"class": "form-control"})
+    )
+
     # Dynamically add document fields with proper widgets
     DOC_TYPE_CHOICES = DOC_TYPE_CHOICES
     def __init__(self, *args, **kwargs):
@@ -180,6 +187,7 @@ class AddStudentForm(forms.ModelForm):
             "intake_status",
             "disability_type",
             "disability_detail",
+            'job_placement',
             "case_manager",
             "dedicated_staff",
             # note: do NOT include `case_status` here

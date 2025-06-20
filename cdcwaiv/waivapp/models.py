@@ -77,7 +77,7 @@ class StudentPersonalInfo(models.Model):
         null=True, blank=True
     )
     disability_detail = models.TextField(null=True, blank=True)
-
+    job_placement = models.TextField(null=True, blank=True)
     updated_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
