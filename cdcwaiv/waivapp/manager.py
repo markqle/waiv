@@ -149,12 +149,13 @@ def add_student_save(request):
         gpa = request.POST.get('gpa')
         case_manager_id = request.POST.get('case_manager') or None
         dedicated_staff_id = request.POST.get('dedicated_staff') or None
+        job_placement = request.POST.get('job_placement')
         cs_code = request.POST.get('case_status')
         if cs_code:
             status = CaseStatusInfo.objects.get(pk=cs_code)
         DOC_CODES = ['waivreferral', 'dr260', 'dr215', 'dr222', 'casenote']
         try:
-            student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=birthdate, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enrollment_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
+            student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=birthdate, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enrollment_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id, job_placement=job_placement)
             student.save()
             StudentLog.objects.create(csulb_id=student, case_status_code=status)
             StudentAcademicLog.objects.create(csulb_id_id=student.csulb_id,academic_plan=academic_plan, academic_level=academic_level, gpa=gpa)
@@ -614,6 +615,7 @@ def edit_student_save(request, csulb_id):
         student.disability_detail  = request.POST.get("disability_detail", "")
         student.case_manager_id    = request.POST.get("case_manager") or None
         student.dedicated_staff_id = request.POST.get("dedicated_staff") or None
+        student.job_placement      = request.POST.get("job_placement", "")
         student.save()
         if new_status and new_status != old_status:
             StudentLog.objects.create(
