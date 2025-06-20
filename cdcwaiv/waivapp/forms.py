@@ -30,13 +30,13 @@ class AddStudentForm(forms.ModelForm):
     )
 
     INTAKE_CHOICES = [
-        (True, "Yes"),
-        (False,"No"),
+        (1, "Yes"),
+        (0,"No"),
     ]
     intake_status = forms.TypedChoiceField(
         label="Intake Status",
         choices=INTAKE_CHOICES,
-        coerce=lambda x: x == 'True',
+        coerce=lambda x: x == 1,
         widget=forms.Select(attrs={"class": "form-control"})
     )
 
@@ -59,7 +59,7 @@ class AddStudentForm(forms.ModelForm):
         empty_label="— Select Case Manager —",
         widget=forms.Select(attrs={"class": "form-control"})
     )
-    dedicated_counselor = StaffChoiceField(
+    dedicated_staff = StaffChoiceField(
         label="Dedicated Counselor",
         queryset=WaivUser.objects.filter(position="counselor"),
         empty_label="— Select Counselor —",
@@ -181,6 +181,6 @@ class AddStudentForm(forms.ModelForm):
             "disability_type",
             "disability_detail",
             "case_manager",
-            "dedicated_counselor",
+            "dedicated_staff",
             # note: do NOT include `case_status` here
         ]
