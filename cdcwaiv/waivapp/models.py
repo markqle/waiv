@@ -46,7 +46,7 @@ class StudentPersonalInfo(models.Model):
     participant_id = models.CharField(max_length=15, unique=True, db_column="participant_id")
     last_name = models.CharField(max_length=100)
     first_name = models.CharField(max_length=100)
-    birthdate = models.DateField()
+    birthdate = models.DateField(null=True, blank=True)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     employ_goal = models.CharField(max_length=255)

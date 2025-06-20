@@ -155,6 +155,7 @@ def add_student_save(request):
         DOC_CODES = ['waivreferral', 'dr260', 'dr215', 'dr222', 'casenote']
         try:
             student=StudentPersonalInfo.objects.create(csulb_id=csulb_id, participant_id=participant_id, first_name=first_name, last_name=last_name, email=email, birthdate=birthdate, phone=phone, employ_goal=employ_goal, city=city, enrollment_date=enrollment_date, intake_status=intake_status, disability_type=disability_type, disability_detail= disability_detail, case_manager_id=case_manager_id, dedicated_staff_id=dedicated_staff_id)
+            student.save()
             StudentLog.objects.create(csulb_id=student, case_status_code=status)
             StudentAcademicLog.objects.create(csulb_id_id=student.csulb_id,academic_plan=academic_plan, academic_level=academic_level, gpa=gpa)
             for code in DOC_CODES:
