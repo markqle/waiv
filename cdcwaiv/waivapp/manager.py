@@ -763,6 +763,7 @@ def monthly_report_detail(request):
             'case_manager':    case_manager,
             'dor_counselor':   counselor,
             'counseling_logs': counseling_logs,
+            'checkins':        checkins,
             'progress':        progress,
             'plan':            plan,
             'staff_sign':      staff_sign,
@@ -777,7 +778,7 @@ def monthly_report_detail(request):
             result.getvalue(),
             content_type='application/pdf'
         )
-        fname = f"Monthly_Report_{student.csulb_id}.pdf"
+        fname = f"Monthly_Report_{datetime.datetime.now().month}-{datetime.datetime.now().year}_{student.first_name}{student.last_name}.pdf"
         response['Content-Disposition'] = f'attachment; filename="{fname}"'
         return response
 
