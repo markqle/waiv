@@ -9,7 +9,7 @@ DOC_TYPE_CHOICES = [
     ("waivreferral", "WAIV Referral Form"),
     ("dr260",        "DR 260 – Consent To Release"),
     ("dr215",        "DR 215 – Individualized Plan Employment (IPE)"),
-    ("dr222",        "DR 222 – VR Services Application"),
+    ("dr222",        "DR 222 / DR 210 – VR Services Application"),
     ("casenote",     "Case Note Authorization"),
 ]
 

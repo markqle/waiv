@@ -524,8 +524,6 @@ def edit_staff_save(request):
             messages.error(request, f"Failed to edit staff: {e}")
             return HttpResponseRedirect("/edit_staff/"+staff_id)
         
-
-# List your doc types once so you can loop over them in both views
 DOC_TYPES = [
     "waivreferral",
     "dr260",
@@ -719,7 +717,6 @@ def monthly_report_detail(request):
     counselor = request.GET.get('dor_counselor')
     up_date   = request.GET.get('updated_date')
     if not pid or not counselor or not up_date:
-        # You could redirect back with an error message or render a 400
         return redirect('create_monthly_report')
     
     student = get_object_or_404(
