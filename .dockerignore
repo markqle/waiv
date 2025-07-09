@@ -1,0 +1,22 @@
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+
+# Environment files - never include secrets in the image
+.env
+
+# Project specific files
+*.drawio
+.*.bkp

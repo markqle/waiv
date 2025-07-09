@@ -96,6 +96,26 @@ python manage.py test
 
 ---
 
+## How to Use These Dockerfile
+Build the Docker Image: Open a terminal in the root directory of your project (c:\Users\CDC.WorkAbility-SA1\mark\waiv) and run:
+
+```bash
+docker build -t waiv-app .
+```
+- This command builds an image named waiv-app based on the instructions in your Dockerfile.
+- Prepare your Production .env file: Make sure you have a .env file inside your cdcwaiv directory with your production database credentials, secret key, and ALLOWED_HOSTS.
+
+Run the Docker Container: Once the image is built, you can run it with the following command:
+
+```bash
+docker run --rm -p 8000:8000 --env-file ./cdcwaiv/.env --name waiv-container waiv-app
+```
+- --rm: Automatically removes the container when it exits.
+- -p 8000:8000: Maps port 8000 on your host machine to port 8000 inside the container.
+- --env-file ./cdcwaiv/.env: Securely passes the variables from your .env file into the container.
+- --name waiv-container: Gives your running container a memorable name.
+Django application will now be running inside a Docker container, accessible at http://localhost:8000.
+
 ## 🛠 Technologies Used
 
 - Django 4.x (Python 3.10+)
