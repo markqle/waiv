@@ -113,11 +113,14 @@ waiv/
 ¦   manage.py
 ¦   README.md
 +---cdcwaiv
+¦   +---settings
+¦   ¦   ¦   __init__.py    
+¦   ¦   ¦   base.py
+¦   ¦   ¦   development.py
+¦   ¦   ¦   production.py
 ¦   ¦   asgi.py
-¦   ¦   settings.py
 ¦   ¦   urls.py
-¦   ¦   wsgi.py
-¦   ¦   __init__.py     
+¦   ¦   wsgi.py 
 +---static
 ¦   ¦   ...
 +---waivapp
