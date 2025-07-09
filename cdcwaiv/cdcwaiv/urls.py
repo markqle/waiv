@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
 from waivapp import views, manager, StaffViews
-from cdcwaiv import settings
+from django.conf import settings
 
 urlpatterns = [
 #   Manager URL path
