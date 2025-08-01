@@ -320,7 +320,7 @@ def import_checkin_simplicity(request):
             pid        = get_str('Student ID')   # e.g. "123456"
             raw_staff  = get_str('Counselor')       # e.g. "DOE, JOHN"
             event_type = get_str('Event Type')       # might be blank
-            name       = get_str('Name')             # student’s name
+            name       = get_str('Student Name')             # student’s name
             location   = get_str('Location')         # event/location
 
             # If Event_Type is blank but we do have a Staff_Name, assume “In-person counseling”
