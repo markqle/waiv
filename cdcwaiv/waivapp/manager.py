@@ -477,24 +477,33 @@ def view_counseling(request):
     })
 
 def manage_student(request):
-    search = request.GET.get('table_search', '').strip()
+    search_query = request.GET.get('table_search', '').strip()
+    selected_counselor_id = request.GET.get('counselor')
+
     # Use select_related to pull in the one-to-one StudentAcademicLog
     qs = StudentPersonalInfo.objects.select_related('academic_log', 'case_manager', 'dedicated_staff')
 
+    # Apply counselor filter
+    if selected_counselor_id:
+        qs = qs.filter(dedicated_staff_id=selected_counselor_id)
 
-    if search:
+    # Apply search filter
+    if search_query:
         qs = qs.filter(
-            Q(csulb_id__icontains=search) |
-            Q(first_name__icontains=search) |
-            Q(last_name__icontains=search)
+            Q(csulb_id__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
         )
 
-    return render(request,
-                  'manager_template/manage_student_template.html',
-                  {
-                    'students': qs,
-                    'search':   search,
-                  })
+    # Get all counselors for the dropdown
+    dedicated_counselors = WaivUser.objects.filter(position='counselor').order_by('first_name', 'last_name')
+
+    return render(request, 'manager_template/manage_student_template.html', {
+        'students':             qs,
+        'search':               search_query,
+        'dedicated_counselors': dedicated_counselors,
+        'selected_counselor':   selected_counselor_id,
+    })
 
 def edit_staff(request, staff_id):
     staff=WaivUser.objects.get(id=staff_id)
