@@ -13,14 +13,26 @@ Manage WAIV Student
                         <h3 class="card-title">WAIV Student Detail</h3>
 
                         <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+                            <form action="{% url 'staff_manage_student' %}" method="get" class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select name="counselor" class="form-control form-control-sm" onchange="this.form.submit()">
+                                        <option value="">All Counselors</option>
+                                        {% for counselor in dedicated_counselors %}
+                                            <option value="{{ counselor.id }}" {% if selected_counselor == counselor.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ counselor.first_name }} {{ counselor.last_name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm" style="width: 150px;">
+                                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search" value="{{ search }}">
 
-                            <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </form>
                             </div>
-                        </div>
-                        </div>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body table-responsive p-0">
@@ -45,6 +57,7 @@ Manage WAIV Student
                                 <th>GPA</th>
                                 <th>Case Manager</th>
                                 <th>Dedicated Counselor</th>
+                                <th>Job Placement</th>
                                 <th>Action</th>
                                 </tr>
                             </thead>
@@ -87,6 +100,9 @@ Manage WAIV Student
                                         —
                                     {% endif %}
                                     </td>
+                                    <td>{{ student.job_placement }}</td>
+                                    <!-- Edit link -->
+                                    <td>
                                     <!-- Edit link -->
                                     <td>
                                     <a href="{% url 'staff_edit_student' student.csulb_id %}"
