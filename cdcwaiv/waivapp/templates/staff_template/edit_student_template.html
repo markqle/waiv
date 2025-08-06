@@ -297,7 +297,17 @@
                       {% endfor %}
                     </select>
                   </div>
-
+                  <!-- Job Placement -->
+                  <div class="form-group">
+                    <label for="id_job_placement">Job Placement</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="id_job_placement"
+                      name="job_placement"
+                      value="{{ student.job_placement }}"
+                    />
+                  </div>
                   <!-- Student Documents -->
                   <div class="form-group">
                     <label>Student Documents</label>

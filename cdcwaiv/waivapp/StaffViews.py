@@ -178,11 +178,34 @@ def view_counseling(request):
 # ——————————————————————————————————————————————————————————————
 
 def manage_student(request):
+    search_query = request.GET.get('table_search', '').strip()
+    selected_counselor_id = request.GET.get('counselor')
+
+    # Base queryset with necessary select_related
     qs = StudentPersonalInfo.objects.select_related(
-        'case_manager','dedicated_staff'
-    ).all()
+        'case_manager', 'dedicated_staff', 'academic_log'
+    ).order_by('last_name', 'first_name')
+
+    # Apply counselor filter
+    if selected_counselor_id:
+        qs = qs.filter(dedicated_staff_id=selected_counselor_id)
+
+    # Apply search filter
+    if search_query:
+        qs = qs.filter(
+            Q(csulb_id__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+    # Get all counselors to populate the dropdown
+    dedicated_counselors = WaivUser.objects.filter(position='counselor').order_by('first_name', 'last_name')
+
     return render(request, "staff_template/manage_student_template.html", {
-        "students": qs,
+        "students":             qs,
+        "search":               search_query,
+        "dedicated_counselors": dedicated_counselors,
+        "selected_counselor":   selected_counselor_id,
     })
 
 def view_student(request, csulb_id):
