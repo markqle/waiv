@@ -12,6 +12,9 @@ DATABASES = {
     'default': env.db('DATABASE_URL')
 }
 
+# If you will serve HTTPS, add CSRF trusted origin(s):
+# CSRF_TRUSTED_ORIGINS = ["https://dsa-cdc-waiv.campus.ad.csulb.edu"]
+
 #HTTPS settings -> This redirects HTTP traffic to HTTPS
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
