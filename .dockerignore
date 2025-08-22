@@ -1,6 +1,8 @@
 # Git
-.git/
+.git
 .gitignore
+.idea/
+.vscode/
 
 # Docker
 Dockerfile
@@ -11,11 +13,17 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.log
+*.sqlite3
 venv/
 .venv/
+node_modules/
+staticfiles/
+media/
 
 # Environment files - never include secrets in the image
 .env
+.env.*
 
 # Project specific files
 *.drawio
