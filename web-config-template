@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <handlers>
+      <add name="PythonHandler" 
+      path="*" 
+      verb="*" 
+      modules="FastCgiModule" 
+      scriptProcessor="<to be filled in>"
+      resourceType="Unspecified"
+      requireAccess="Script"/>
+    </handlers>
+  </system.webServer>
+
+  <appSettings>
+    <add key="PYTHONPATH" value="C:\inetpub\wwwroot\waiv\cdcwaiv" />
+    <add key="WSGI_HANDLER" value="cdcwaiv.wsgi.application" />
+    <add key="DJANGO_SETTINGS_MODULE" value="cdcwaiv.settings.production" />
+  </appSettings>
+</configuration>
