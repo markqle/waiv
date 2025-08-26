@@ -7,7 +7,14 @@ services:
     volumes:
       - staticfiles:/app/staticfiles
       - mediafiles:/app/media
-    # If you want logs right away and auto-restart:
+    command: >
+      gunicorn cdcwaiv.wsgi:application
+      --bind 0.0.0.0:8000 --workers 2 --timeout 60
+    healthcheck:
+      test: ["CMD", "sh", "-c", "timeout 2 bash -c '</dev/tcp/127.0.0.1/8000' >/dev/null 2>&1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
 
   nginx:
@@ -16,10 +23,12 @@ services:
       - web
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - staticfiles:/static:ro   # Nginx serves /static from here
-      - mediafiles:/media:ro     # and /media from here
+      - ./certs:/etc/nginx/certs:ro        # <— place your PEM files here
+      - staticfiles:/static:ro
+      - mediafiles:/media:ro
     restart: unless-stopped
 
 volumes:
