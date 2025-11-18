@@ -9,8 +9,24 @@
 <section class="content">
   <div class="container-fluid">
 
+    <form method="get" class="form-inline mb-3">
+      <input type="hidden" name="participant_id" value="{{ student.participant_id }}" />
+      <input type="hidden" name="dor_counselor" value="{{ dor_counselor }}" />
+      <input type="hidden" name="updated_date" value="{{ listing_updated_date }}" />
+      <label class="mr-2 mb-0" for="filter-month">Reporting Month</label>
+      <input
+        id="filter-month"
+        type="month"
+        class="form-control mr-2"
+        name="filter_month"
+        value="{{ selected_month_value }}"
+      />
+      <button type="submit" class="btn btn-primary">Apply</button>
+    </form>
+
     <form method="post">
       {% csrf_token %}
+      <input type="hidden" name="filter_month" value="{{ selected_month_value }}" />
 
       {# === 1) STUDENT INFO HEADER === #}
       <h4>Student Info</h4>
@@ -26,7 +42,10 @@
       </div>
 
       {# === 2) COUNSELING SESSIONS TABLE === #}
-      <h4>Counseling Sessions</h4>
+      <h4>
+        Counseling Sessions
+        <small class="text-muted">({{ selected_month_label }})</small>
+      </h4>
       <div class="table-responsive mb-4">
         <table class="table table-sm table-bordered">
           <thead class="thead-light">
@@ -55,7 +74,10 @@
       </div>
 
       {# === 3) NEW: CDC EVENT PARTICIPATION TABLE === #}
-      <h4>CDC Event Participation</h4>
+      <h4>
+        CDC Event Participation
+        <small class="text-muted">({{ selected_month_label }})</small>
+      </h4>
       <div class="table-responsive mb-4">
         <table class="table table-sm table-bordered">
           <thead class="thead-light">

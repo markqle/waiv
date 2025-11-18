@@ -3,6 +3,17 @@
 Manage WAIV Student
 {% endblock page_title %}
 {% block main_content %}
+<style>
+  .waiv-table-scroll-top {
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-bottom: 8px;
+    height: 16px;
+  }
+  .waiv-table-scroll-spacer {
+    height: 1px;
+  }
+</style>
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -35,7 +46,10 @@ Manage WAIV Student
                             </div>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body table-responsive p-0">
+                    <div class="waiv-table-scroll-top">
+                        <div class="waiv-table-scroll-spacer"></div>
+                    </div>
+                    <div class="card-body table-responsive p-0 waiv-table-scroll-main">
                         <table class="table table-hover text-nowrap">
                             <thead>
                                 <tr>
@@ -127,4 +141,26 @@ Manage WAIV Student
             </div>
         </div>
       </section>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const topScroll = document.querySelector('.waiv-table-scroll-top');
+          const spacer = document.querySelector('.waiv-table-scroll-spacer');
+          const mainScroll = document.querySelector('.waiv-table-scroll-main');
+          const table = mainScroll ? mainScroll.querySelector('table') : null;
+          if (!topScroll || !spacer || !mainScroll || !table) {
+            return;
+          }
+          const syncWidths = () => {
+            spacer.style.width = table.scrollWidth + 'px';
+          };
+          syncWidths();
+          topScroll.addEventListener('scroll', () => {
+            mainScroll.scrollLeft = topScroll.scrollLeft;
+          });
+          mainScroll.addEventListener('scroll', () => {
+            topScroll.scrollLeft = mainScroll.scrollLeft;
+          });
+          window.addEventListener('resize', syncWidths);
+        });
+      </script>
 {% endblock main_content %}
