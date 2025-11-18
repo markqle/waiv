@@ -733,16 +733,42 @@ def monthly_report_detail(request):
         participant_id=pid
     )
     case_manager = student.case_manager  # WaivUser FK
+    filter_month_str = (
+        request.POST.get('filter_month')
+        if request.method == 'POST'
+        else request.GET.get('filter_month')
+    )
+    today = timezone.now().date()
+    month_reference = today.replace(day=1)
+    if filter_month_str:
+        try:
+            parsed_month = datetime.datetime.strptime(
+                filter_month_str,
+                '%Y-%m'
+            ).date()
+            month_reference = parsed_month.replace(day=1)
+        except ValueError:
+            month_reference = today.replace(day=1)
+    selected_month_value = month_reference.strftime('%Y-%m')
+    selected_month_label = month_reference.strftime('%B %Y')
     counseling_logs = (
         CounselingLog.objects
-        .filter(csulb_id=student)
+        .filter(
+            csulb_id=student,
+            date_checkin__year=month_reference.year,
+            date_checkin__month=month_reference.month,
+        )
         .select_related('service_type', 'staff')
         .order_by('date_checkin')
     )
 
     checkins = (
         CheckinSimplicity.objects
-        .filter(csulb_id=student.csulb_id)
+        .filter(
+            csulb_id=student.csulb_id,
+            date_checkin__year=month_reference.year,
+            date_checkin__month=month_reference.month,
+        )
         .order_by('-date_checkin')
     )
 
@@ -775,6 +801,7 @@ def monthly_report_detail(request):
             'staff_sign':      staff_sign,
             'staff_title':     staff_title,
             'date':            date_field,
+            'reporting_month': selected_month_label,
         })
         result = BytesIO()
         pisa_status = pisa.CreatePDF(html, dest=result)
@@ -794,5 +821,8 @@ def monthly_report_detail(request):
         'dor_counselor':   counselor,
         'counseling_logs': counseling_logs,
         'checkins':        checkins,
+        'selected_month_value': selected_month_value,
+        'selected_month_label': selected_month_label,
+        'listing_updated_date': up_date,
         **defaults,
     })

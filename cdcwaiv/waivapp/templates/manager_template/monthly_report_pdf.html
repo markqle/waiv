@@ -17,11 +17,22 @@
     .signature-block { margin-top: 32px; }
     .signature-label { display: inline-block; width: 30%; }
     .signature-field { display: inline-block; width: 65%; border-bottom: 1px solid #333; }
+    .counseling-table { table-layout: fixed; }
+    .counseling-table .service-col { width: 30%; }
+    .counseling-table .staff-col { width: 18%; }
+    .counseling-table .date-col { width: 15%; }
+    .counseling-table .case-note-col { width: 37%; word-break: break-word; }
+    .write-in-table { width: 100%; border-collapse: collapse; }
+    .write-in-table td { width: 100%; padding-bottom: 10px; border: none !important; }
+    .write-in-box { margin-top: 4px; border: 1px solid #333; padding: 12px; min-height: 600px; }
   </style>
 </head>
 <body>
   {# === 1) STUDENT INFO === #}
   <h2>Monthly Report for {{ student.first_name }} {{ student.last_name }} || California State University Long Beach</h2>
+  {% if reporting_month %}
+    <p><strong>Reporting Month:</strong> {{ reporting_month }}</p>
+  {% endif %}
   <h4>Student Info</h4>
   <table>
     <tr>
@@ -45,23 +56,28 @@
   </table>
 
   {# === 2) COUNSELING SESSIONS === #}
-  <h4 class="section-header">Counseling Sessions</h4>
-  <table>
+  <h4 class="section-header">
+    Counseling Sessions
+    {% if reporting_month %}
+      ({{ reporting_month }})
+    {% endif %}
+  </h4>
+  <table class="counseling-table">
     <thead>
       <tr>
-        <th style="width: 25%;">Service Type</th>
-        <th style="width: 20%;">Staff</th>
-        <th style="width: 15%;">Date</th>
-        <th style="width: 40%;">Case Note</th>
+        <th class="service-col">Service Type</th>
+        <th class="staff-col">Staff</th>
+        <th class="date-col">Date</th>
+        <th class="case-note-col">Case Note</th>
       </tr>
     </thead>
     <tbody>
       {% for note in counseling_logs %}
         <tr>
-          <td>{{ note.service_type.service_description }}</td>
-          <td>{{ note.staff.get_full_name }}</td>
-          <td>{{ note.date_checkin }}</td>
-          <td>{{ note.case_note }}</td>
+          <td class="service-col">{{ note.service_type.service_description }}</td>
+          <td class="staff-col">{{ note.staff.get_full_name }}</td>
+          <td class="date-col">{{ note.date_checkin }}</td>
+          <td class="case-note-col">{{ note.case_note }}</td>
         </tr>
       {% empty %}
         <tr>
@@ -72,7 +88,12 @@
   </table>
 
   {# === 3) CDC EVENT PARTICIPATION === #}
-  <h4 class="section-header">CDC Event Participation</h4>
+  <h4 class="section-header">
+    CDC Event Participation
+    {% if reporting_month %}
+      ({{ reporting_month }})
+    {% endif %}
+  </h4>
   <table>
     <thead>
       <tr>
@@ -108,17 +129,19 @@
 
   {# === 4) PROGRESS & PLAN === #}
   <h4 class="section-header">Progress & Plan</h4>
-  <table>
+  <table class="write-in-table">
     <tr>
-      <td style="width: 50%; vertical-align: top;">
+      <td>
         <strong>Progress toward IPE:</strong><br>
-        <div style="margin-top: 4px; border: 1px solid #333; padding: 6px; min-height: 60px;">
+        <div class="write-in-box">
           {{ progress }}
         </div>
       </td>
-      <td style="width: 50%; vertical-align: top;">
+    </tr>
+    <tr>
+      <td>
         <strong>Plan for Next Step:</strong><br>
-        <div style="margin-top: 4px; border: 1px solid #333; padding: 6px; min-height: 60px;">
+        <div class="write-in-box">
           {{ plan }}
         </div>
       </td>
