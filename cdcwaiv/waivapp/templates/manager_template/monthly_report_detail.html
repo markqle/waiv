@@ -33,7 +33,7 @@
       <div class="row mb-3">
         <div class="col"><strong>CSULB ID:</strong> {{ student.csulb_id }}</div>
         <div class="col"><strong>Name:</strong> {{ student.first_name }} {{ student.last_name }}</div>
-        <div class="col"><strong>DOB:</strong> {{ student.birthdate }}</div>
+        <div class="col"><strong>Participant ID:</strong> {{ student.participant_id }}</div>
       </div>
       <div class="row mb-3">
         <div class="col"><strong>Employment Goal:</strong> {{ student.employ_goal }}</div>
@@ -60,7 +60,12 @@
             {% for note in counseling_logs %}
               <tr>
                 <td>{{ note.service_type.service_description }}</td>
-                <td>{{ note.staff.get_full_name }}</td>
+                <td>
+                  {{ note.staff.get_full_name }}
+                  {% if note.staff.position %}
+                    <br>- WAIV {{ note.staff.position }}
+                  {% endif %}
+                </td>
                 <td>{{ note.date_checkin }}</td>
                 <td>{{ note.case_note }}</td>
               </tr>
@@ -136,7 +141,7 @@
       {# === 5) STAFF SIGNATURE / DATE / TITLE === #}
       <div class="form-row mt-4">
         <div class="form-group col-md-4">
-          <label for="id_staff_sign">Staff Signature</label>
+          <label for="id_staff_sign">Staff Name</label>
           <input
             type="text"
             class="form-control"
