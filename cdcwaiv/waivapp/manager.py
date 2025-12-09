@@ -673,6 +673,7 @@ def create_monthly_report(request):
         MonthlyClientListingLog.objects
         .values_list('updated_date', flat=True)
         .distinct()
+        .order_by('-updated_date')
     )
 
     selected_counselor = request.GET.get('dor_counselor')

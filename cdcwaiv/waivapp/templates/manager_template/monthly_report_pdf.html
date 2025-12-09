@@ -42,8 +42,8 @@
       <td style="width: 30%;">{{ student.first_name }} {{ student.last_name }}</td>
     </tr>
     <tr>
-      <th>DOB</th>
-      <td>{{ student.birthdate }}</td>
+      <th>Participant ID</th>
+      <td>{{ student.participant_id }}</td>
       <th>Employment Goal</th>
       <td>{{ student.employ_goal }}</td>
     </tr>
@@ -75,7 +75,12 @@
       {% for note in counseling_logs %}
         <tr>
           <td class="service-col">{{ note.service_type.service_description }}</td>
-          <td class="staff-col">{{ note.staff.get_full_name }}</td>
+          <td class="staff-col">
+            {{ note.staff.get_full_name }}
+            {% if note.staff.position %}
+              <br>- WAIV {{ note.staff.position }}
+            {% endif %}
+          </td>
           <td class="date-col">{{ note.date_checkin }}</td>
           <td class="case-note-col">{{ note.case_note }}</td>
         </tr>
@@ -150,7 +155,7 @@
 
   {# === 5) STAFF SIGNATURE / DATE / TITLE === #}
   <div class="signature-block">
-    <div><span class="signature-label">Staff Signature:</span>
+    <div><span class="signature-label">Staff Name:</span>
       <span class="signature-field">{{ staff_sign }}</span>
     </div>
     <div style="margin-top: 12px;">
