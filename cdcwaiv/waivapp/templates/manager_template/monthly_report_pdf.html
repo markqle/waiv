@@ -24,7 +24,14 @@
     .counseling-table .case-note-col { width: 37%; word-break: break-word; }
     .write-in-table { width: 100%; border-collapse: collapse; }
     .write-in-table td { width: 100%; padding-bottom: 10px; border: none !important; }
-    .write-in-box { margin-top: 4px; border: 1px solid #333; padding: 12px; min-height: 600px; }
+    .write-in-box { width: 100%; border-collapse: collapse; margin-top: 4px; }
+    .write-in-box td {
+      border: 1px solid #333;
+      padding: 8px;
+      line-height: 16px;
+      height: 120px;
+      vertical-align: top;
+    }
   </style>
 </head>
 <body>
@@ -138,17 +145,21 @@
     <tr>
       <td>
         <strong>Progress toward IPE:</strong><br>
-        <div class="write-in-box">
-          {{ progress }}
-        </div>
+        <table class="write-in-box">
+          <tr>
+            <td>{{ progress }}</td>
+          </tr>
+        </table>
       </td>
     </tr>
     <tr>
       <td>
         <strong>Plan for Next Step:</strong><br>
-        <div class="write-in-box">
-          {{ plan }}
-        </div>
+        <table class="write-in-box">
+          <tr>
+            <td>{{ plan }}</td>
+          </tr>
+        </table>
       </td>
     </tr>
   </table>
