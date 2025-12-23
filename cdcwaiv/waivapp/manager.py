@@ -733,6 +733,18 @@ def monthly_report_detail(request):
         StudentPersonalInfo,
         participant_id=pid
     )
+    last_status_log = (
+        StudentLog.objects
+        .filter(csulb_id=student)
+        .select_related('case_status_code')
+        .order_by('-updated_date')
+        .first()
+    )
+    case_status = (
+        last_status_log.case_status_code.case_description
+        if last_status_log and last_status_log.case_status_code
+        else ''
+    )
     case_manager = student.case_manager  # WaivUser FK
     filter_month_str = (
         request.POST.get('filter_month')
@@ -795,6 +807,7 @@ def monthly_report_detail(request):
             'student':         student,
             'case_manager':    case_manager,
             'dor_counselor':   counselor,
+            'case_status':     case_status,
             'counseling_logs': counseling_logs,
             'checkins':        checkins,
             'progress':        progress,
@@ -820,6 +833,7 @@ def monthly_report_detail(request):
         'student':         student,
         'case_manager':    case_manager,
         'dor_counselor':   counselor,
+        'case_status':     case_status,
         'counseling_logs': counseling_logs,
         'checkins':        checkins,
         'selected_month_value': selected_month_value,
