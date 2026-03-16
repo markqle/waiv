@@ -762,8 +762,10 @@ def monthly_report_detail(request):
             month_reference = parsed_month.replace(day=1)
         except ValueError:
             month_reference = today.replace(day=1)
+
     selected_month_value = month_reference.strftime('%Y-%m')
     selected_month_label = month_reference.strftime('%B %Y')
+
     counseling_logs = (
         CounselingLog.objects
         .filter(
@@ -795,39 +797,49 @@ def monthly_report_detail(request):
         'date':        today,
     }
 
-    # if user clicked “Export PDF”…
-    if request.method == 'POST' and request.POST.get('export') == 'pdf':
-        # pull each field explicitly
-        progress    = request.POST.get('progress',    defaults['progress'])
-        plan        = request.POST.get('plan',        defaults['plan'])
-        staff_sign  = request.POST.get('staff_sign',  defaults['staff_sign'])
-        staff_title = request.POST.get('staff_title', defaults['staff_title'])
-        date_field  = request.POST.get('date',        defaults['date'])
-        html = render_to_string('manager_template/monthly_report_pdf.html', {
-            'student':         student,
-            'case_manager':    case_manager,
-            'dor_counselor':   counselor,
-            'case_status':     case_status,
+    if request.method == 'POST':
+        export_format = request.POST.get('export')
+        form_data = {
+            'progress': request.POST.get('progress', defaults['progress']),
+            'plan': request.POST.get('plan', defaults['plan']),
+            'staff_sign': request.POST.get('staff_sign', defaults['staff_sign']),
+            'staff_title': request.POST.get('staff_title', defaults['staff_title']),
+            'date': request.POST.get('date', defaults['date']),
+        }
+        context = {
+            'student': student,
+            'case_manager': case_manager,
+            'dor_counselor': counselor,
+            'case_status': case_status,
             'counseling_logs': counseling_logs,
-            'checkins':        checkins,
-            'progress':        progress,
-            'plan':            plan,
-            'staff_sign':      staff_sign,
-            'staff_title':     staff_title,
-            'date':            date_field,
+            'checkins': checkins,
             'reporting_month': selected_month_label,
-        })
-        result = BytesIO()
-        pisa_status = pisa.CreatePDF(html, dest=result)
-        if pisa_status.err:
-            return HttpResponse('PDF generation error', status=500)
-        response = HttpResponse(
-            result.getvalue(),
-            content_type='application/pdf'
-        )
-        fname = f"Monthly_Report_{datetime.datetime.now().month}-{datetime.datetime.now().year}_{student.first_name}{student.last_name}.pdf"
-        response['Content-Disposition'] = f'attachment; filename="{fname}"'
-        return response
+            **form_data,
+        }
+
+        if export_format == 'pdf':
+            html = render_to_string('manager_template/monthly_report_pdf.html', context)
+            result = BytesIO()
+            pisa_status = pisa.CreatePDF(html, dest=result)
+            if pisa_status.err:
+                return HttpResponse('PDF generation error', status=500)
+            response = HttpResponse(
+                result.getvalue(),
+                content_type='application/pdf'
+            )
+            fname = f"Monthly_Report_{datetime.datetime.now().month}-{datetime.datetime.now().year}_{student.first_name}{student.last_name}.pdf"
+            response['Content-Disposition'] = f'attachment; filename=\"{fname}\"'
+            return response
+
+        if export_format == 'doc':
+            html = render_to_string('manager_template/monthly_report_doc.html', context)
+            response = HttpResponse(
+                html,
+                content_type='application/msword'
+            )
+            fname = f"Monthly_Report_{datetime.datetime.now().month}-{datetime.datetime.now().year}_{student.first_name}{student.last_name}.doc"
+            response['Content-Disposition'] = f'attachment; filename=\"{fname}\"'
+            return response
 
     return render(request, 'manager_template/monthly_report_detail.html', {
         'student':         student,
@@ -839,5 +851,5 @@ def monthly_report_detail(request):
         'selected_month_value': selected_month_value,
         'selected_month_label': selected_month_label,
         'listing_updated_date': up_date,
-        **defaults,
+        'form_data': defaults,
     })

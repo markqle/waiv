@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monthly Report – {{ student.first_name }} {{ student.last_name }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      margin: 30px;
+    }
+    h2, h4 {
+      margin-bottom: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 18px;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 6px;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .no-data {
+      text-align: center;
+      color: #666;
+    }
+    .section-header {
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    .write-box {
+      border: 1px solid #333;
+      min-height: 100px;
+      padding: 8px;
+      margin-top: 6px;
+      margin-bottom: 18px;
+      white-space: pre-wrap;
+    }
+    .signature-block div {
+      margin-top: 10px;
+    }
+    .label {
+      display: inline-block;
+      width: 140px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Monthly Report for {{ student.first_name }} {{ student.last_name }} || California State University Long Beach</h2>
+
+  {% if reporting_month %}
+    <p><strong>Reporting Month:</strong> {{ reporting_month }}</p>
+  {% endif %}
+
+  <h4>Student Info</h4>
+  <table>
+    <tr>
+      <th style="width: 20%;">CSULB ID</th>
+      <td style="width: 30%;">{{ student.csulb_id }}</td>
+      <th style="width: 20%;">Name</th>
+      <td style="width: 30%;">{{ student.first_name }} {{ student.last_name }}</td>
+    </tr>
+    <tr>
+      <th>Participant ID</th>
+      <td>{{ student.participant_id }}</td>
+      <th>Employment Goal</th>
+      <td>{{ student.employ_goal }}</td>
+    </tr>
+    <tr>
+      <th>Program Coordinator</th>
+      <td>{{ case_manager.get_full_name }}</td>
+      <th>DOR Counselor</th>
+      <td>{{ dor_counselor }}</td>
+    </tr>
+    <tr>
+      <th>Case Status</th>
+      <td colspan="3">{{ case_status }}</td>
+    </tr>
+  </table>
+
+  <h4 class="section-header">
+    Counseling Sessions
+    {% if reporting_month %}({{ reporting_month }}){% endif %}
+  </h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Service Type</th>
+        <th>Staff</th>
+        <th>Date</th>
+        <th>Case Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for note in counseling_logs %}
+        <tr>
+          <td>{{ note.service_type.service_description }}</td>
+          <td>
+            {{ note.staff.get_full_name }}
+            {% if note.staff.position %}
+              <br>- WAIV / BMAC {{ note.staff.position }}
+            {% endif %}
+          </td>
+          <td>{{ note.date_checkin }}</td>
+          <td>{{ note.case_note }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="no-data">No counseling sessions recorded.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="section-header">
+    CDC Event Participation
+    {% if reporting_month %}({{ reporting_month }}){% endif %}
+  </h4>
+  <table>
+    <thead>
+      <tr>
+        <th>Event Type</th>
+        <th>Date Check-in</th>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Counselor</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in checkins %}
+        <tr>
+          <td>{{ event.event_type }}</td>
+          <td>{{ event.date_checkin }}</td>
+          <td>{{ event.name }}</td>
+          <td>{{ event.location }}</td>
+          <td>
+            {% if event.staff %}
+              {{ event.staff.get_full_name }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="no-data">No CDC event participation found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="section-header">Describe Consumer Progress toward IPE</h4>
+  <div class="write-box">{{ progress }}</div>
+
+  <h4 class="section-header">Plan for next step</h4>
+  <div class="write-box">{{ plan }}</div>
+
+  <div class="signature-block">
+    <div><span class="label">Staff Name:</span> {{ staff_sign }}</div>
+    <div><span class="label">Date:</span> {{ date }}</div>
+    <div><span class="label">Title of Staff:</span> {{ staff_title }}</div>
+  </div>
+</body>
+</html>
